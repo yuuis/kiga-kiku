@@ -1,0 +1,2 @@
+module Kiku
+end
