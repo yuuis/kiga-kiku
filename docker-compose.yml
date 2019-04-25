@@ -1,0 +1,34 @@
+version: '3'
+services:
+
+  db:
+    image: mysql:8.0
+    restart: always
+    command: --default-authentication-plugin=mysql_native_password
+    ports:
+      - 3306:3306
+    volumes:
+      - ./db/mysql_data:/var/lib/mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_USER: kiku
+      MYSQL_PASSWORD: kiku
+      MYSQL_DATABASE: kiku
+
+  kiku:
+    build: .
+    command: bundle exec hanami server --host 0.0.0.0 -p 2300
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_USER: kiku
+      MYSQL_PASSWORD: kiku
+      MYSQL_DATABASE: kiku
+      MYSQL_HOST: db
+    volumes:
+      - ".:/kiku"
+    ports:
+      - "2300:2300"
+    depends_on:
+      - db
+    links:
+      - db
