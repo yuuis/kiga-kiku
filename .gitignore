@@ -2,3 +2,4 @@
 /public/assets*
 /tmp
 .DS_Store
+.idea/
