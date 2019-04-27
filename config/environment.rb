@@ -1,7 +1,7 @@
 require 'bundler/setup'
 require 'hanami/setup'
 require 'hanami/model'
-require_relative '../lib/cat_api_hanami'
+require_relative '../lib/kiku'
 require_relative '../apps/api/application'
 
 Hanami.configure do
@@ -14,9 +14,9 @@ Hanami.configure do
     # Available options:
     #
     #  * SQL adapter
-    #    adapter :sql, 'sqlite://db/cat_api_hanami_development.sqlite3'
-    #    adapter :sql, 'postgresql://localhost/cat_api_hanami_development'
-    #    adapter :sql, 'mysql://localhost/cat_api_hanami_development'
+    #    adapter :sql, 'sqlite://db/kiku_development.sqlite3'
+    #    adapter :sql, 'postgresql://localhost/kiku_development'
+    #    adapter :sql, 'mysql://localhost/kiku_development'
     #
     adapter :sql, ENV.fetch('DATABASE_URL')
 
@@ -28,7 +28,7 @@ Hanami.configure do
   end
 
   mailer do
-    root 'lib/cat_api_hanami/mailers'
+    root 'lib/kiku/mailers'
 
     # See http://hanamirb.org/guides/mailers/delivery
     delivery :test
