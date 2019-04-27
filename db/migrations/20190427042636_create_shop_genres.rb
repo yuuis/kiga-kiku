@@ -1,7 +1,7 @@
 Hanami::Model.migration do
   change do
-    create_table :genders do
-      primary_key :id
+    create_table :shop_genres do
+      primary_key :code
 
       column :name, String, null: false
 
