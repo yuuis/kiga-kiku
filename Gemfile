@@ -1,16 +1,21 @@
 source 'https://rubygems.org'
 
-gem 'rake'
-gem 'hanami',       '~> 1.3'
+gem 'hanami', '~> 1.3'
 gem 'hanami-model', '~> 1.3'
+gem 'rake'
 
-gem 'sqlite3'
+gem 'rom-repository'
+gem 'rom-sql'
+
+gem 'mysql2'
+
+gem 'tilt-jbuilder', github: 'vladfaust/hanami-jbuilder'
 
 group :development do
   # Code reloading
   # See: http://hanamirb.org/guides/projects/code-reloading
-  gem 'shotgun', platforms: :ruby
   gem 'hanami-webconsole'
+  gem 'shotgun', platforms: :ruby
 end
 
 group :test, :development do
@@ -18,10 +23,19 @@ group :test, :development do
 end
 
 group :test do
-  gem 'rspec'
   gem 'capybara'
+  gem 'rspec'
 end
 
 group :production do
   # gem 'puma'
+end
+
+group :development, :test do
+  gem 'pry-byebug'
+  gem 'pry-doc'
+  gem 'pry-rails'
+
+  gem 'byebug', platforms: %i[mri mingw x64_mingw]
+  gem 'rubocop', require: false
 end
