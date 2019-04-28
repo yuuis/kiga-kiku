@@ -5,4 +5,3 @@ class RecommendLog < Hanami::Entity
     attribute :day_of_the_week, Types::String
   end
 end
-

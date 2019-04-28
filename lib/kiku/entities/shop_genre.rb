@@ -4,4 +4,3 @@ class ShopGenre < Hanami::Entity
     attribute :name, Types::String
   end
 end
-
