@@ -5,6 +5,7 @@ Hanami::Model.migration do
 
       column :user_id, Integer, null: false
       column :day_of_the_week, Integer, null: false
+      column :search_words, String, null: false
 
       column :created_at, DateTime, null: false
       column :updated_at, DateTime, null: false

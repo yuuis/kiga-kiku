@@ -6,4 +6,3 @@ class Shop < Hanami::Entity
     attribute :genre_code, Types::Int
   end
 end
-
