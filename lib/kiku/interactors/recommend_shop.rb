@@ -17,7 +17,7 @@ class AddBook
 
   private
 
-  def recommend(day_of_the_week, user = nil, lat = nil, lng = nil)
+  def recommend(user, search_word)
 
   end
 end
