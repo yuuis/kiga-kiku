@@ -3,6 +3,7 @@ Hanami::Model.migration do
     create_table :shops do
       primary_key :id
 
+      column :code, String, null: false
       column :name, String, null: false
       column :genre_code, String, null: false
       column :small_area_code, String, null: false
