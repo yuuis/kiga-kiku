@@ -69,19 +69,15 @@ class AddBook
     uri = URI.parse(ENV['HOTPEPPER_HOST'])
     http = Net::HTTP.new(uri.host, uri.port)
 
-    headers = {
-      'Content-Type' => 'application/json'
-    }
-
     params = {
       key: ENV['HOTPEPPER_API_KEY'],
       format: 'json',
       count: 3
     }.merge(conditions)
 
-    response = http.get(uri.path + '?' + URI.encode_www_form(params), headers)
+    response = http.get(uri.path + '/gourmet/v1?' + URI.encode_www_form(params))
 
-    return nil if response.code != 200
+    return nil if response.code != '200'
 
     JSON.parse(response.body)['results']['shop']
   end
