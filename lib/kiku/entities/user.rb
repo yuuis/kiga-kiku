@@ -5,4 +5,14 @@ class User < Hanami::Entity
     attribute :birthday, Types::Int
     attribute :gender, Types::Int
   end
+
+  private
+
+  def age
+    require 'date'
+
+    date_format = '%Y%m%d'
+    (Date.today.strftime(date_format).to_i - birthday.strftime(date_format).to_i) / 10_000
+  end
 end
+n
