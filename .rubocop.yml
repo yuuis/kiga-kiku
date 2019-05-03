@@ -3,3 +3,9 @@ Metrics/LineLength:
 
 Metrics/BlockLength:
     Max: 35
+
+Style/Documentation:
+    Enabled: false
+
+Style/AsciiComments:
+    Enabled: false
