@@ -1,6 +1,6 @@
 Hanami::Model.migration do
   change do
-    create_table :recommended_logs do
+    create_table :recommend_logs do
       primary_key :id
       foreign_key :user_id, :users, on_delete: :cascade, null: false
 
