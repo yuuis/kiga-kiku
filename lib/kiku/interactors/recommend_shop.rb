@@ -14,7 +14,10 @@ class AddBook
   private
 
   def recommend(_user, search_word)
-    # いろいろやる
+    # レコメンド条件
+    # * ユーザのフィードバックの良い条件をconditionsに足す
+    # * 曜日によって、ご飯か居酒屋かを変えてconditionsに足す
+    # * 時間帯によって、深夜営業している条件をconditionsに足す
 
     conditions = {
       # 'small_area' => '',
@@ -29,6 +32,7 @@ class AddBook
   def get_shops(conditions)
     require 'net/http'
     require 'json'
+    require 'uri'
 
     uri = URI.parse(ENV['HOTPEPPER_HOST'])
     http = Net::HTTP.new(uri.host, uri.port)
@@ -40,7 +44,8 @@ class AddBook
 
     params = {
       'key' => ENV['HOTPEPPER_API_KEY'],
-      'format' => 'json'
+      'format' => 'json',
+      'count' => 3,
     }.merge(conditions)
 
     response = http.get(uri.path + '?' + hash_to_query(params), headers)
