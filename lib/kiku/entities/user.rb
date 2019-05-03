@@ -6,8 +6,6 @@ class User < Hanami::Entity
     attribute :gender, Types::Int
   end
 
-  private
-
   def age
     require 'date'
 
