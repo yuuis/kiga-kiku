@@ -3,13 +3,17 @@
 require 'hanami/interactor'
 require 'date'
 
-class AddBook
+class RecommendShop
   include Hanami::Interactor
 
   expose :shops
 
-  def call(user, params)
-    # shops = recommend(user, params.words)
+  def call(user_id, words)
+    user = UserRepository.new.find(user_id)
+
+    return nil if user.nil?
+
+    @shops = recommend(user, words)
   end
 
   private
