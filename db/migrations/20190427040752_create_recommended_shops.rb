@@ -5,7 +5,7 @@ Hanami::Model.migration do
       foreign_key :shop_id, :shops, on_delete: :cascade, null: false
       foreign_key :recommend_log_id, :recommend_logs, on_delete: :cascade, null: false
 
-      column :feed_back, TrueClass
+      column :feed_back, Integer
 
       column :created_at, DateTime, null: false
       column :updated_at, DateTime, null: false

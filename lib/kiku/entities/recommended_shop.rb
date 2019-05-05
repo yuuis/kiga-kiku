@@ -3,6 +3,6 @@ class RecommendedShop < Hanami::Entity
     attribute :id, Types::Int
     attribute :shop_id, Types::String
     attribute :recommend_log_id, Types::Int
-    attribute :feed_back, Types::Bool
+    attribute :feed_back, Types::Int
   end
 end
