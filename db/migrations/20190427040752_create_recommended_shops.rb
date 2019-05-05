@@ -3,6 +3,7 @@ Hanami::Model.migration do
     create_table :recommended_shops do
       primary_key :id
       foreign_key :shop_id, :shops, on_delete: :cascade, null: false
+      foreign_key :recommend_log_id, :recommend_logs, on_delete: :cascade, null: false
 
       column :feed_back, TrueClass
 
