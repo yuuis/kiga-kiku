@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class SmallAreaRepository < Hanami::Repository
+class BudgetRepository < Hanami::Repository
   associations do
     has_many :shops
   end
