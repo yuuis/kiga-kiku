@@ -10,4 +10,9 @@ class ShopRepository < Hanami::Repository
     # belongs_to :service_area
     # belongs_to :budget
   end
+
+  def user_recent(user)
+    # userが行った一番最近のお店を返す。
+    # 行ったをどうやって判断する？
+  end
 end
