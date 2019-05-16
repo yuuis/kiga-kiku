@@ -1,6 +1,6 @@
 Hanami::Model.migration do
   change do
-    create_table :large_areas do
+    create_table :small_area do
       column :code, String, null: false, primary_key: true
       column :name, String, null: false
 
