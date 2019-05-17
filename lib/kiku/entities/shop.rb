@@ -6,6 +6,7 @@ class Shop < Hanami::Entity
     attribute :sub_genre_code, Types::String
     attribute :small_area_code, Types::String
     attribute :large_area_code, Types::String
+    attribute :service_area_code, Types::String
     attribute :budget_code, Types::String
 
     attribute :name, Types::String
