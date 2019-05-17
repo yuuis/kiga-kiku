@@ -3,10 +3,12 @@ require_relative '../../config/boot'
 class ShopSeed
   def call
     ShopRepository.new.create(
+      id: 'J001051208',
       genre_code: 'G001',
       sub_genre_code: 'G002',
       small_area_code: 'X005',
       large_area_code: 'Z011',
+      service_area_code: 'SA11',
       budget_code: 'B001',
       name: '九州魂 京王八王子店',
       mobile_access: 'JR八王子駅北口徒歩3分 飲み放題ﾄﾞﾘﾝｸ充実!(^^)!',
