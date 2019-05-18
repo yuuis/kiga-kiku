@@ -7,4 +7,3 @@ class LargeAreaRepository < Hanami::Repository
     has_many :shops
   end
 end
-

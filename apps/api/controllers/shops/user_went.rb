@@ -25,4 +25,3 @@ module Api::Controllers::Shops
     end
   end
 end
-

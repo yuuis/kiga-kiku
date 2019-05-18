@@ -6,4 +6,3 @@ class Feedback < Hanami::Entity
     attribute :feel, Types::Bool # 0: bad 1: good
   end
 end
-

@@ -20,6 +20,5 @@ class ShopGenreSeed
     JSON.parse(response.body)['results']['genre'].each do |genre|
       ShopGenreRepository.new.create(code: genre['code'], name: genre['name'])
     end
-
   end
 end
