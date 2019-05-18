@@ -15,7 +15,7 @@ module Api::Controllers::Shops
     def call(params)
       halt 400 unless params.valid?
 
-      @shops = UserWentShopInteractor.new.call(params.get(:user_id))
+      @shops = UserWentShopRecent.new.call(params.get(:user_id))
     end
 
     private

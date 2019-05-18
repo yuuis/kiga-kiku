@@ -2,7 +2,7 @@
 
 require 'hanami/interactor'
 
-class UserWentShopInteractor
+class UserWentShopRecent
   include Hanami::Interactor
 
   expose :shops
