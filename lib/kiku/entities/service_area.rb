@@ -4,4 +4,3 @@ class ServiceArea < Hanami::Entity
     attribute :name, Types::String
   end
 end
-

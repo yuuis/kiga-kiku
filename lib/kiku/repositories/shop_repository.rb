@@ -8,6 +8,6 @@ class ShopRepository < Hanami::Repository
     # belongs_to :small_area
     # belongs_to :large_area
     # belongs_to :service_area
-    # belongs_to :budget
+    belongs_to :budget
   end
 end
