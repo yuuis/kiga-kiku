@@ -42,11 +42,18 @@ class RecommendShop
     conditions.merge(genre: 'G001')
   end
 
-  # 現在時刻が22:00以降であれば、深夜営業(食事も)していることを条件に足す
+  # 現在時刻が21:00以降であれば、深夜営業(食事も)していることを条件に足す
   def add_condition_midnight(conditions)
-    return conditions if Time.now.hour.between?(0, 21)
+    return conditions if Time.now.hour.between?(2, 20)
 
     conditions.merge(midnight_meal: 1)
+  end
+
+  # 現在時刻が10:00 ~ 13:00であれば、ランチありを条件に足す
+  def add_condition_lunch(conditions)
+    return conditions unless Time.now.hour.between?(10, 13)
+
+    conditions.merge(lunch: 1)
   end
 
   # ユーザの年齢によって予算を条件に足す
