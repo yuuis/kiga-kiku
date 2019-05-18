@@ -14,4 +14,10 @@ class UserWentShopRepository < Hanami::Repository
       .limit(limit)
       .to_a
   end
+
+  def findby_user_id(user_id)
+    user_went_shops
+      .where(user_id: user_id)
+      .to_a
+  end
 end
