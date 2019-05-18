@@ -4,7 +4,6 @@ module Api::Views::Shops
     layout false
 
     def render
-      binding.pry
       shops.shops.nil? ? '[]' : _raw(shops.shops.to_json)
     end
   end
