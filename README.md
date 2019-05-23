@@ -10,6 +10,11 @@ prototype of *kiga-kiku flamework* ver.1
   $ docker-compose up -d
 ```
 
+## how to access mysql_data
+```sh
+  $ docker run -v kiku_mysql_data:/srv -it ubuntu bash
+```
+
 ## api
   * GET `/shops`
     * query params

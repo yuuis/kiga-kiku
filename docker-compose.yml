@@ -3,17 +3,16 @@ services:
 
   db:
     image: mysql:8.0
-    restart: always
+#    restart: always
     command: --default-authentication-plugin=mysql_native_password --character-set-server=utf8 --collation-server=utf8_unicode_ci
     volumes:
-#      - ./db/mysql_data:/var/lib/mysql
+      - mysql_data:/var/lib/mysql
       - ./db/mysql_data/my.cnf:/etc/mysql/conf.d/my.cnf
     environment:
       MYSQL_ROOT_PASSWORD: root
       MYSQL_USER: kiku
       MYSQL_PASSWORD: kiku
       MYSQL_DATABASE: kiku
-
   kiku:
     build: .
     command: bundle exec hanami server --host 0.0.0.0 -p 2300
@@ -31,3 +30,5 @@ services:
       - db
     links:
       - db
+volumes:
+  mysql_data:
