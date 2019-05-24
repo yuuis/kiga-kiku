@@ -31,15 +31,15 @@ module LineBot::Controllers::Callback
               type: 'text',
               text: event.message['address']
             }
+            client.reply_message(event['replyToken'], message)
             break
           when Line::Bot::Event::MessageType::Text
             message = {
               type: 'text',
               text: event.message['text']
             }
-            break
+            client.reply_message(event['replyToken'], message)
           end
-          client.reply_message(event['replyToken'], message)
         end
       }
 
