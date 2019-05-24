@@ -3,9 +3,11 @@ require 'hanami/setup'
 require 'hanami/model'
 require_relative '../lib/kiku'
 require_relative '../apps/api/application'
+require_relative '../apps/line_bot/application'
 
 Hanami.configure do
   mount Api::Application, at: '/api'
+  mount LineBot::Application, at: '/line_bot'
 
   model do
     ##
