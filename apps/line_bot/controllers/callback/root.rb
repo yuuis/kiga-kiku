@@ -1,6 +1,7 @@
 module LineBot::Controllers::Callback
   class Root
     require 'line/bot'
+    require_relative 'ReplyTest'
 
     include LineBot::Action
     accept :json
@@ -34,10 +35,18 @@ module LineBot::Controllers::Callback
             client.reply_message(event['replyToken'], message)
             break
           when Line::Bot::Event::MessageType::Text
-            message = {
-              type: 'text',
-              text: event.message['text']
-            }
+
+            # @shops = RecommendShop.new.call(params.get(event.source.userId), params.get(:words).split(','))
+
+            Hanami.logger.debug event.message['text']
+
+            if event.message['text'] == "お寿司"
+               message = getRecommendSample(event.message['text'])
+            else 
+              message = getQuickReplyTest
+            end
+
+
             client.reply_message(event['replyToken'], message)
           end
         end
