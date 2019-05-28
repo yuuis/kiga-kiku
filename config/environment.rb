@@ -38,7 +38,7 @@ Hanami.configure do
 
   environment :development do
     # See: http://hanamirb.org/guides/projects/logging
-    logger level: :debug
+    logger level: :debug, stream: './Hanami.log'
   end
 
   environment :production do
