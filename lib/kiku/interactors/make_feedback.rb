@@ -21,6 +21,6 @@ class MakeFeedback
 
   def make_feedback(user, shop, feel, conditions)
     feedback = FeedbackRepository.new.create(user_id: user.id, shop_id: shop.id, feel: feel)
-    ConditionRepository.new.create(feedback_id: feedback.id, conditions: conditions)
+    ConditionRepository.new.create(feedback_id: feedback.id, conditions: conditions.to_json)
   end
 end
