@@ -42,7 +42,6 @@ class GuessCondition
 
     shops = get_shops(user)
     points = calculate(shops)
-    binding.pry
     points[:other].select { |_key, point| point > shops.count / 3 }
   end
 
@@ -57,7 +56,7 @@ class GuessCondition
 
   def calculate(shops)
     points = {
-      genre:  {},
+      genre: {},
       sub_genre: {},
       large_area: {},
       small_area: {},

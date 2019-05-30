@@ -8,4 +8,3 @@ module Api::Views::Conditions
     end
   end
 end
-
