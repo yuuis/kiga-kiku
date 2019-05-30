@@ -8,27 +8,25 @@ class RecommendShop
 
   expose :shops
 
-  def call(user_id, words)
+  def call(user_id, words, latitude = nil, longitude = nil)
     user = UserRepository.new.find(user_id)
 
     return nil if user.nil?
 
-    @shops = recommend(user, words)
+    @shops = recommend(user, words, latitude, longitude)
   end
 
   private
 
-  def recommend(user, search_word)
+  def recommend(user, search_word, latitude, longitude)
     conditions = {
-      # 'small_area' => '',
-      # 'genre' => '',
-      # 'card' => 0,
       keyword: search_word.join(' ')
     }
 
     conditions = add_condition_tavern(conditions)
     conditions = add_condition_midnight(conditions)
     conditions = add_condition_budget(conditions, user)
+    conditions = add_condition_range(conditions, latitude, longitude)
 
     # TODO: ユーザのフィードバックの良い条件をconditionsに足す
 
@@ -56,13 +54,18 @@ class RecommendShop
     conditions.merge(lunch: 1)
   end
 
+  # ユーザのいる位置を条件に足す
+  def add_condition_range(conditions, latitude, longitude)
+    return conditions if latitude.nil? || longitude.nil?
+
+    conditions.merge(lat: latitude, lng: longitude, range: 3)
+  end
+
   # ユーザの年齢によって予算を条件に足す
   def add_condition_budget(conditions, user)
-    age = user.age
+    return conditions if user.age > 35
 
-    return conditions if age > 35
-
-    case age
+    case user.age
     when 0..22 then conditions.merge(budget: 'B001') # ¥1501 ~ ¥2000
     when 23..29 then conditions.merge(budget: 'B002') # ¥2001 ~ ¥3000
     when 30..35 then conditions.merge(budget: 'B003') # ¥3001 ~ ¥4000
