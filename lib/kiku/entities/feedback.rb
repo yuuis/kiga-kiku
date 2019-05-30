@@ -3,6 +3,6 @@ class Feedback < Hanami::Entity
     attribute :id, Types::Int
     attribute :user_id, Types::Int
     attribute :shop_id, Types::String
-    attribute :feel, Types::Bool # 0: bad 1: good
+    attribute :feel, Types::Bool # false: bad true: good
   end
 end
