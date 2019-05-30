@@ -27,8 +27,7 @@ class RecommendShop
     conditions = add_condition_midnight(conditions)
     conditions = add_condition_budget(conditions, user)
     conditions = add_condition_range(conditions, latitude, longitude)
-
-    # TODO: ユーザのフィードバックの良い条件をconditionsに足す
+    conditions = add_condition_user_feedback(conditions, user)
 
     get_shops(conditions)
   end
@@ -73,6 +72,13 @@ class RecommendShop
     end
 
     conditions
+  end
+
+  def add_condition_user_feedback(conditions, user)
+    like_feedbacks = FeedbackRepository.new.like_feedbacks(user)
+    like_conditions = ConditionRepository.new.feedback_conditions(like_feedbacks)
+
+    conditions.merge(like_conditions.map { |lc| JSON.parse(lc.first.conditions) }.flatten.first)
   end
 
   def get_shops(conditions)
