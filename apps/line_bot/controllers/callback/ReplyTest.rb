@@ -92,6 +92,32 @@ def getCalucelReplyTest
   return message
 end
 
+def getDatepickerTest
+  message = {
+    type: 'template',
+    altText: 'this is an template message',
+    template: {
+      type: 'buttons',
+      title: 'event schedule',
+      text: 'select date',
+      actions: [
+        {
+          type: 'datetimepicker',
+          label: 'ok',
+          data: 'datetimepicker=ok',
+          mode: 'date'
+        },
+        {
+          type: 'postback',
+          label: 'no',
+          data: 'datetimepicker=no',
+        },
+      ]
+    }
+  }
+  return message
+end
+
 def parseCalucelMessage(columns)
   if columns.length > 0 then
     return {
@@ -110,10 +136,10 @@ def parseCalucelMessage(columns)
   end
 end
 
-def getRecommendSample(word)
-  shops = RecommendShop.new.call(1, word.split(','))
+def getRecommendSample(userid, word)
+  shops = RecommendShop.new.call(userid, word.split(/[,\n*| ]/))
 
-  Hanami.logger.debug shops.shops.to_json
+  Hanami.logger.debug word.split(/[,\n*| ]/)
 
   columns = []
   shops.shops.each do |shop|
@@ -124,13 +150,13 @@ def getRecommendSample(word)
       actions: [
         {
           type: 'message',
-          label: 'keep',
-          text: 'keep'
+          label: 'ここにする',
+          text: 'ここにする'
         },
         {
           type: 'uri',
-          label: 'site',
-          uri: 'https://example.com/page2'
+          label: '詳しくみる',
+          uri: shop['urls']['pc']
         },
       ],
     }
