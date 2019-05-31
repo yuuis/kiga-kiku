@@ -24,6 +24,7 @@ module LineBot::Controllers::Callback
       events = client.parse_events_from(body)
 
       events.each { |event|
+        userid = event['source']['userId']
         case event
         when Line::Bot::Event::Message
           case event.type
@@ -35,10 +36,17 @@ module LineBot::Controllers::Callback
             client.reply_message(event['replyToken'], message)
             break
           when Line::Bot::Event::MessageType::Text
+            reply_debug = true 
+            if reply_debug 
+              message = checkLexical(event.message['text'])
+              if message
+                client.reply_message(event['replyToken'], message)
+                return true
+              end
+            end
 
-            # @shops = RecommendShop.new.call(params.get(event.source.userId), params.get(:words).split(','))
 
-            Hanami.logger.debug event.message['text']
+            # Hanami.logger.debug event.message['text']
 
             if event.message['text'] == "お寿司"
                message = getRecommendSample(event.message['text'])
@@ -54,5 +62,17 @@ module LineBot::Controllers::Callback
 
       status 200, "ok"
     end
-  end
+
+
+    private
+    def checkLexical(word)
+      case word
+        when "テキスト"
+          return getTextReplyTest
+        when "Datepicker"
+          return getDatepickerTest
+      end
+      return nil
+    end
+  end  
 end
