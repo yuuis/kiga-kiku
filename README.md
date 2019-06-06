@@ -8,6 +8,7 @@ prototype of *kiga-kiku flamework* ver.1
   $ docker-compose run kiku bundle exec hanami db prepare
   $ docker-compose run kiku bundle exec ruby db/seeds/seed.rb
   $ docker-compose up -d
+  $ ssh -R kigakiku:80:localhost:2300 serveo.net
 ```
 
 ## how to access mysql_data

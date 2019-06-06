@@ -7,24 +7,22 @@ module LineBot::Controllers::Callback
     accept :json
 
     def client
-      @client ||= Line::Bot::Client.new { |config|
-        config.channel_secret = ENV["LINE_CHANNEL_SECRET"]
-        config.channel_token = ENV["LINE_CHANNEL_TOKEN"]
-      }
+      @client ||= Line::Bot::Client.new do |config|
+        config.channel_secret = ENV['LINE_CHANNEL_SECRET']
+        config.channel_token = ENV['LINE_CHANNEL_TOKEN']
+      end
     end
 
-    def call(params)
+    def call(_params)
       body = request.body.read
 
       signature = request.env['HTTP_X_LINE_SIGNATURE']
-      unless client.validate_signature(body, signature)
-        status 400, "Bad request"
-      end
+      status 400, 'Bad request' unless client.validate_signature(body, signature)
 
       events = client.parse_events_from(body)
 
-      events.each { |event|
-        userid = event['source']['userId']
+      events.each do |event|
+        line_user_id = event['source']['userId']
         case event
         when Line::Bot::Event::Message
           case event.type
@@ -36,8 +34,8 @@ module LineBot::Controllers::Callback
             client.reply_message(event['replyToken'], message)
             break
           when Line::Bot::Event::MessageType::Text
-            reply_debug = true 
-            if reply_debug 
+            reply_debug = true
+            if reply_debug
               message = checkLexical(event.message['text'])
               if message
                 client.reply_message(event['replyToken'], message)
@@ -45,34 +43,32 @@ module LineBot::Controllers::Callback
               end
             end
 
-
             # Hanami.logger.debug event.message['text']
 
-            if event.message['text'] == "お寿司"
-               message = getRecommendSample(event.message['text'])
-            else 
-              message = getQuickReplyTest
-            end
-
+            message = if event.message['text'] == 'お寿司'
+                        getRecommendSample(1, event.message['text'])
+                      else
+                        getQuickReplyTest
+                      end
 
             client.reply_message(event['replyToken'], message)
           end
         end
-      }
+      end
 
-      status 200, "ok"
+      status 200, 'ok'
     end
-
 
     private
+
     def checkLexical(word)
       case word
-        when "テキスト"
-          return getTextReplyTest
-        when "Datepicker"
-          return getDatepickerTest
+      when 'テキスト'
+        return getTextReplyTest
+      when 'Datepicker'
+        return getDatepickerTest
       end
-      return nil
+      nil
     end
-  end  
+  end
 end
