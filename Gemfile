@@ -11,8 +11,6 @@ gem 'mysql2'
 
 gem 'tilt-jbuilder', github: 'vladfaust/hanami-jbuilder'
 
-gem 'line-bot-api'
-
 group :development do
   # Code reloading
   # See: http://hanamirb.org/guides/projects/code-reloading
