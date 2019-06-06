@@ -41,7 +41,7 @@ def get_text_reply_test
   }
 end
 
-def get_calucel_reply_test
+def get_carousel_reply_test
   {
     type: 'template',
     altText: 'this is an template message',
@@ -112,7 +112,7 @@ def get_datepicker_test
   }
 end
 
-def parse_calucel_message(columns)
+def parse_carousel_message(columns)
   unless columns.empty?
     {
       type: 'template',
