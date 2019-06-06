@@ -63,12 +63,10 @@ module LineBot::Controllers::Callback
 
     def check_lexical(word)
       case word
-      when 'テキスト'
-        return getTextReplyTest
-      when 'Datepicker'
-        return getDatepickerTest
+        when 'テキスト' getTextReplyTest
+        when 'Datepicker' getDatepickerTest
+        else nil
       end
-      nil
     end
   end
 end
