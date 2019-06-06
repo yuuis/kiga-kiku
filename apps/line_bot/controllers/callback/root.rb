@@ -77,11 +77,21 @@ module LineBot::Controllers::Callback
             # ============================================================
             
 
-            message = if event.message['text'] == 'お寿司'
-                        get_recommend_sample(1, event.message['text'])
-                      else
-                        get_quick_reply_test
-                      end
+            session_id = watson_session.result["session_id"]
+            response = assistant.message(
+              assistant_id: ENV["WATSON_ASSISTANT_ID"],
+              session_id: session_id,
+              input: { text: "Turn on the lights" }
+            )
+            
+            Hanami.logger.debug response.result.to_json()
+
+            if event.message['text'] == "お寿司"
+               message = getRecommendSample(event.message['text'])
+            else 
+              message = getQuickReplyTest
+            end
+
 
             client.reply_message(event['replyToken'], message)
           end
