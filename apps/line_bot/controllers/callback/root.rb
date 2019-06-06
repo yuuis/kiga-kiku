@@ -36,7 +36,7 @@ module LineBot::Controllers::Callback
           when Line::Bot::Event::MessageType::Text
             reply_debug = true
             if reply_debug
-              message = checkLexical(event.message['text'])
+              message = check_lexical(event.message['text'])
               if message
                 client.reply_message(event['replyToken'], message)
                 return true
@@ -46,9 +46,9 @@ module LineBot::Controllers::Callback
             # Hanami.logger.debug event.message['text']
 
             message = if event.message['text'] == 'お寿司'
-                        getRecommendSample(1, event.message['text'])
+                        get_recommend_sample(1, event.message['text'])
                       else
-                        getQuickReplyTest
+                        get_quick_reply_test
                       end
 
             client.reply_message(event['replyToken'], message)
@@ -61,7 +61,7 @@ module LineBot::Controllers::Callback
 
     private
 
-    def checkLexical(word)
+    def check_lexical(word)
       case word
       when 'テキスト'
         return getTextReplyTest

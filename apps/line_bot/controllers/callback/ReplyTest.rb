@@ -1,5 +1,5 @@
-def getQuickReplyTest
-  message = {
+def get_quick_reply_test
+  {
     type: 'text',
     text: 'こんばんは。今日の夜ご飯はどうしますか？',
     quickReply: {
@@ -32,19 +32,17 @@ def getQuickReplyTest
       ]
     }
   }
-  message
 end
 
-def getTextReplyTest
-  message = {
+def get_text_reply_test
+  {
     type: 'text',
     text: 'test'
   }
-  message
 end
 
-def getCalucelReplyTest
-  message = {
+def get_calucel_reply_test
+  {
     type: 'template',
     altText: 'this is an template message',
     template: {
@@ -87,11 +85,10 @@ def getCalucelReplyTest
       ]
     }
   }
-  message
 end
 
-def getDatepickerTest
-  message = {
+def get_datepicker_test
+  {
     type: 'template',
     altText: 'this is an template message',
     template: {
@@ -113,10 +110,9 @@ def getDatepickerTest
       ]
     }
   }
-  message
 end
 
-def parseCalucelMessage(columns)
+def parse_calucel_message(columns)
   unless columns.empty?
     {
       type: 'template',
@@ -134,7 +130,7 @@ def parseCalucelMessage(columns)
   end
 end
 
-def getRecommendSample(userid, word)
+def get_recommend_sample(userid, word)
   shops = RecommendShop.new.call(userid, word.split(/[,\n*| ]/))
 
   Hanami.logger.debug word.split(/[,\n*| ]/)
@@ -160,7 +156,7 @@ def getRecommendSample(userid, word)
     }
   end
 
-  message = {
+  {
     type: 'template',
     altText: 'this is an template message',
     template: {
@@ -168,5 +164,4 @@ def getRecommendSample(userid, word)
       columns: columns
     }
   }
-  message
 end
