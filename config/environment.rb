@@ -3,9 +3,11 @@ require 'hanami/setup'
 require 'hanami/model'
 require_relative '../lib/kiku'
 require_relative '../apps/api/application'
+require_relative '../apps/line_bot/application'
 
 Hanami.configure do
   mount Api::Application, at: '/api'
+  mount LineBot::Application, at: '/line_bot'
 
   model do
     ##
@@ -36,7 +38,7 @@ Hanami.configure do
 
   environment :development do
     # See: http://hanamirb.org/guides/projects/logging
-    logger level: :debug
+    logger level: :debug, stream: './Hanami.log'
   end
 
   environment :production do
