@@ -1,14 +1,8 @@
 module LineBot::Controllers::Callback
   class Root
     require 'line/bot'
-<<<<<<< HEAD
     require_relative 'reply_test'
     require 'ibm_watson/assistant_v2'
-=======
-    require "ibm_watson/assistant_v2"
-    require_relative 'ReplyTest'
-    
->>>>>>> add library and connect watson
 
     include LineBot::Action
     accept :json
@@ -50,11 +44,6 @@ module LineBot::Controllers::Callback
             }
             client.reply_message(event['replyToken'], message)
             break
-<<<<<<< HEAD
-
-          when Line::Bot::Event::MessageType::Text
-            reply_debug = true
-=======
           when Line::Bot::Event::MessageType::Text  #テキストが送られてきた場合
 
             # 文章解析を行う
@@ -77,7 +66,6 @@ module LineBot::Controllers::Callback
             # UIデバッグ用の、サンプルキーテキスト受信用 ========================
             reply_debug = true 
 
->>>>>>> add library and connect watson
             if reply_debug
               message = check_lexical(event.message['text'])
               
