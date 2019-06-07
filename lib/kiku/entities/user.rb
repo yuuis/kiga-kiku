@@ -4,6 +4,10 @@ class User < Hanami::Entity
     attribute :name, Types::String
     attribute :birthday, Types::Int
     attribute :gender, Types::Int
+    attribute :married, Types::Bool
+    attribute :have_children, Types::Bool
+    attribute :smoker, Types::Bool
+    attribute :job, Types::String
   end
 
   def age
