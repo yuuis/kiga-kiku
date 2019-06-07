@@ -2,6 +2,6 @@
 
 class RecommendedShopRepository < Hanami::Repository
   associations do
-    belongs_to :recommend_log
+    belongs_to :recommend_conversation
   end
 end
