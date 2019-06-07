@@ -1,7 +1,7 @@
 module LineBot::Controllers::Callback
   class Root
     require 'line/bot'
-    require_relative 'ReplyTest'
+    require_relative 'reply_test'
 
     include LineBot::Action
     accept :json
@@ -63,8 +63,8 @@ module LineBot::Controllers::Callback
 
     def check_lexical(word)
       case word
-        when 'テキスト' getTextReplyTest
-        when 'Datepicker' getDatepickerTest
+        when 'テキスト' then get_text_reply_test
+        when 'Datepicker' then get_datepicker_test
         else nil
       end
     end
