@@ -1,8 +1,11 @@
 module LineBot::Controllers::Callback
   class Root
     require 'line/bot'
-    require_relative 'reply_test'
     require 'ibm_watson/assistant_v2'
+
+    require_relative 'reply_test'
+    require_relative 'reply_message'
+    require_relative 'watson_parse'
 
     include LineBot::Action
     accept :json
@@ -16,6 +19,7 @@ module LineBot::Controllers::Callback
 
     def call(_params)
       body = request.body.read
+      message = []
 
       # 先にWatsonの接続
       assistant = IBMWatson::AssistantV2.new(
@@ -57,29 +61,24 @@ module LineBot::Controllers::Callback
             response = assistant.message(
               assistant_id: ENV["WATSON_ASSISTANT_ID"],
               session_id: session_id,
-              input: { text: "Turn on the lights" }
+              input: { text: event.message['text'] }
             )
+            watson_result = response.result;
             
-            Hanami.logger.debug response.result.to_json()
+            Hanami.logger.debug watson_result.to_json()
 
+            # watsonによる返信文を生成して格納
+            message << get_message(event, watson_result)
+
+            if pull_entities(get_entities(watson_result)).include?("メニュー")
+              # message << get_recommend(event, watson_result)
+              message << get_recommend_sample(1, "お寿司")
+            end
 
             # UIデバッグ用の、サンプルキーテキスト受信用 ========================
-            reply_debug = true 
-
-            if reply_debug
-              message = check_lexical(event.message['text'])
-              
-          when Line::Bot::Event::MessageType::Text  #テキストが送られてきた場合
-
-            # 文章解析を行う
-            # 1. セッションを生成
-            watson_session = assistant.create_session(
-              assistant_id: ENV["WATSON_ASSISTANT_ID"]
-            )
-
-            reply_debug = true 
+            reply_debug = false
             if reply_debug 
-              message = check_lexical(event.message['text'])
+              message << check_lexical(event.message['text'])
               if message
                 client.reply_message(event['replyToken'], message)
                 return true
@@ -87,21 +86,8 @@ module LineBot::Controllers::Callback
             end
             # ============================================================
             
-
-            session_id = watson_session.result["session_id"]
-            response = assistant.message(
-              assistant_id: ENV["WATSON_ASSISTANT_ID"],
-              session_id: session_id,
-              input: { text: "Turn on the lights" }
-            )
             
-            Hanami.logger.debug response.result.to_json()
-            message = if event.message['text'] == 'お寿司'
-                        get_recommend_sample(1, event.message['text'])
-                      else
-                        get_quick_reply_test
-                      end
-
+            # 最後に送信
             client.reply_message(event['replyToken'], message)
           end
         end
