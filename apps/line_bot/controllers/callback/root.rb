@@ -71,8 +71,7 @@ module LineBot::Controllers::Callback
             message << get_message(event, watson_result)
 
             if pull_entities(get_entities(watson_result)).include?("メニュー")
-              # message << get_recommend(event, watson_result)
-              message << get_recommend_sample(1, "お寿司")
+              message << get_recommend(event, watson_result)
             end
 
             # UIデバッグ用の、サンプルキーテキスト受信用 ========================

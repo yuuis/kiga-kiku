@@ -27,7 +27,7 @@ class RecommendShop
     conditions = add_condition_tavern(conditions)
     conditions = add_condition_midnight(conditions)
     conditions = add_condition_budget(conditions, user)
-    conditions = add_condition_range(conditions, latitude, longitude)
+    # conditions = add_condition_range(conditions, latitude, longitude)
     conditions = add_condition_user_feedback(conditions, user)
 
     get_shops(conditions)
@@ -55,11 +55,12 @@ class RecommendShop
   end
 
   # ユーザのいる位置を条件に足す
-  def add_condition_range(conditions, latitude, longitude)
-    return conditions if latitude.nil? || longitude.nil?
+  # def add_condition_range(conditions, latitude, longitude)
+  #   # 挙動がおかしいので一時コメントアウト
+  #   return conditions if latitude.nil? || longitude.nil?
 
-    conditions.merge(lat: latitude, lng: longitude, range: 3)
-  end
+  #   conditions.merge(lat: latitude, lng: longitude, range: 3)
+  # end
 
   # ユーザの年齢によって予算を条件に足す
   def add_condition_budget(conditions, user)
