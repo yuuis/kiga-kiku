@@ -69,10 +69,15 @@ module LineBot::Controllers::Callback
 
             # watsonによる返信文を生成して格納
             message << get_message(event, watson_result)
-
-            if pull_entities(get_entities(watson_result)).include?("メニュー")
+            
+            watson_entities = pull_entities(get_entities(watson_result))
+            if watson_entities.include?("メニュー")
               message << get_recommend(event, watson_result)
+            elsif watson_entities.include?("起動ワード")
+              message << get_first_recommend(event).merge(get_quick_reply(['もっと安い', '近くのお店']))        
             end
+
+          
 
             # UIデバッグ用の、サンプルキーテキスト受信用 ========================
             reply_debug = false
