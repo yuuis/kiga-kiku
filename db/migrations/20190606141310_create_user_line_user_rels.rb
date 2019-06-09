@@ -1,6 +1,6 @@
 Hanami::Model.migration do
   change do
-    create_table :user_line_user_rel do
+    create_table :user_line_user_rels do
       primary_key :id
       foreign_key :user_id, :users, on_delete: :cascade, null: false
 
