@@ -15,6 +15,8 @@ end
 
 # entitiesに含まれているentityを配列で取得
 def pull_entities(entities)
+  return if entities.blank?
+
   result = []
   entities.each do |entity|
     result << entity['entity']
