@@ -113,7 +113,12 @@ def get_datepicker_test
 end
 
 def parse_carousel_message(columns)
-  unless columns.empty?
+  if columns.empty?
+    {
+      type: 'text',
+      text: 'データが見つかりません'
+    }
+  else
     {
       type: 'template',
       altText: 'this is an template message',
@@ -121,11 +126,6 @@ def parse_carousel_message(columns)
         type: 'carousel',
         columns: columns
       }
-    }
-  else
-    {
-      type: 'text',
-      text: 'データが見つかりません'
     }
   end
 end

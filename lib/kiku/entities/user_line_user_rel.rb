@@ -3,4 +3,3 @@ class UserLineUserRel < Hanami::Entity
     attribute :user_id, Types::String
   end
 end
-
