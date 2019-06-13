@@ -1,9 +1,7 @@
 # frozen_string_literal: true
 
 class LocationRepository < Hanami::Repository
-  self.relation = :large_areas
-
   associations do
-    has_many :shops
+    belongs_to :user
   end
 end

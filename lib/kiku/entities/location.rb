@@ -6,6 +6,7 @@ class Location < Hanami::Entity
     attribute :longitude, Types::String
     attribute :activity_type, Types::String
     attribute :altitude, Types::String
+    attribute :uuid, Types::String
 
     attribute :created_at, Types::Time
     attribute :updated_at, Types::Time
