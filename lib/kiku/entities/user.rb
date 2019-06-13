@@ -8,6 +8,8 @@ class User < Hanami::Entity
     attribute :have_children, Types::Bool
     attribute :smoker, Types::Bool
     attribute :job, Types::String
+    attribute :created_at, Types::Time
+    attribute :updated_at, Types::Time
   end
 
   def age
