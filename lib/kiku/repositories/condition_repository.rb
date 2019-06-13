@@ -46,6 +46,7 @@ class ConditionRepository < Hanami::Repository
   private
 
   def budgets
+    # TODO: 直書きしてるけど、DBにマスタデータが入っているので、金額順にして取得するほうが良い
     %w[B009 B010 B011 B001 B002 B003 B008 B004 B005 B006 B012 B013 B014]
   end
 end
