@@ -27,7 +27,7 @@ module LineBot::Controllers::Callback
         username: ENV['WATSON_USERNAME'],
         password: ENV['WATSON_PASSWORD']
       )
-
+      
       # LINEからのヘッダー解析
       signature = request.env['HTTP_X_LINE_SIGNATURE']
       status 400, 'Bad request' unless client.validate_signature(body, signature)
