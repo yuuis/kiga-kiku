@@ -42,8 +42,6 @@ module LineBot::Controllers::Callback
         when Line::Bot::Event::Follow
           user = UserRepository.new.create(name: 'name_1')
           UserLineUserRelRepository.new.create(user_id: user.id, line_user_id: line_user_id)
-          # ユーザー情報を追加
-
           break
         when Line::Bot::Event::Message
           case event.type
