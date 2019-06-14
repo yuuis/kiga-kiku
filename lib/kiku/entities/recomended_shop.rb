@@ -3,5 +3,7 @@ class RecommendedShop < Hanami::Entity
     attribute :id, Types::Int
     attribute :shop, Types::String
     attribute :recommend_conversation_id, Types::String
+    attribute :created_at, Types::Time
+    attribute :updated_at, Types::Time
   end
 end

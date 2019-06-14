@@ -11,11 +11,10 @@ gem 'mysql2'
 
 gem 'tilt-jbuilder', github: 'vladfaust/hanami-jbuilder'
 
-
 gem 'rubocop-performance'
 
-gem 'line-bot-api'
 gem 'ibm_watson'
+gem 'line-bot-api'
 
 group :development do
   # Code reloading
