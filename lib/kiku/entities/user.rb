@@ -16,7 +16,6 @@ class User < Hanami::Entity
     require 'date'
 
     date_format = '%Y%m%d'
-    birthday.nil? ? nil : ((Date.today.strftime(date_format).to_i - birthday.strftime(date_format).to_i) / 10000)
-
+    birthday.nil? ? nil : ((Date.today.strftime(date_format).to_i - birthday.strftime(date_format).to_i) / 10_000)
   end
 end

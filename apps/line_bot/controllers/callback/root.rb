@@ -27,7 +27,7 @@ module LineBot::Controllers::Callback
         username: ENV['WATSON_USERNAME'],
         password: ENV['WATSON_PASSWORD']
       )
-      
+
       # LINEからのヘッダー解析
       signature = request.env['HTTP_X_LINE_SIGNATURE']
       status 400, 'Bad request' unless client.validate_signature(body, signature)
@@ -36,7 +36,6 @@ module LineBot::Controllers::Callback
       events = client.parse_events_from(body)
 
       events.each do |event|
-
         user_id = get_user_id(event)
 
         case event
@@ -44,8 +43,8 @@ module LineBot::Controllers::Callback
           if user_id.blank?
             user = UserRepository.new.create(name: 'name_1')
             UserLineUserRelRepository.new.create(user_id: user.id, line_user_id: line_user_id)
-          
-            message = get_add_friend()
+
+            message = get_add_friend
             client.reply_message(event['replyToken'], message)
           end
           break
@@ -77,18 +76,18 @@ module LineBot::Controllers::Callback
 
             Hanami.logger.debug watson_result.to_json
 
-            message = [];
-            
+            message = []
+
             watson_entities = pull_entities(get_entities(watson_result))
             unless watson_entities.nil?
 
               # watsonによる返信文を生成して格納
               message << get_message(event, watson_result)
 
-              if watson_entities.include?("メニュー")
+              if watson_entities.include?('メニュー')
                 message << get_recommend(event, watson_result)
-              elsif watson_entities.include?("起動ワード")
-                message << get_first_recommend(event)#.merge(get_quick_reply(['もっと安い', '近くのお店']))        
+              elsif watson_entities.include?('起動ワード')
+                message << get_first_recommend(event) # .merge(get_quick_reply(['もっと安い', '近くのお店']))
               end
 
               # UIデバッグ用の、サンプルキーテキスト受信用 ========================
@@ -101,9 +100,7 @@ module LineBot::Controllers::Callback
                 end
               end
               # ============================================================
-    
-            else
-              
+
             end
 
             # 最後に送信

@@ -7,9 +7,7 @@ def get_user_id(line_event)
   user_id = user_rel.blank? ? nil : user_rel.user_id
 end
 
-
-def get_message(line_event, watson_reply) 
-
+def get_message(_line_event, watson_reply)
   # line_id = event.message['id']
 
   # TODO: line_idをuser_idに変換
@@ -22,11 +20,9 @@ def get_message(line_event, watson_reply)
   }
 end
 
-
 def get_recommend(line_event, watson_reply)
-
   # 引っかかったキーワードを取得してみる
-  words = get_origin_entities(line_event.message['text'], watson_reply, "メニュー")
+  words = get_origin_entities(line_event.message['text'], watson_reply, 'メニュー')
 
   shops = RecommendShop.new.call(get_user_id(line_event), words)
 
@@ -35,19 +31,19 @@ end
 
 # 特にワード指定無しでレコメンド
 def get_first_recommend(line_event)
-  shops = RecommendShop.new.call(get_user_id(line_event), ["ラーメン"])
+  shops = RecommendShop.new.call(get_user_id(line_event), ['ラーメン'])
 
   render_shops_template(shops)
 end
 
 def get_quick_reply(items_list)
-  more_items = RECOMMEND_MORE_ITEMS.select {|item| items_list.include?(item[:label]) }
+  more_items = RECOMMEND_MORE_ITEMS.select { |item| items_list.include?(item[:label]) }
   more_items.empty? ? {} : quick_reply(more_items)
 end
 
 def quick_reply(items_list)
   items = []
-  items_list.each do | item |
+  items_list.each do |item|
     items << {
       type: 'action',
       imageUrl: item[:imageUrl].blank? ? nil : item[:imageUrl],
@@ -65,8 +61,6 @@ def quick_reply(items_list)
     }
   }
 end
-
-
 
 RECOMMEND_MORE_ITEMS = [
   {
@@ -103,10 +97,10 @@ RECOMMEND_MORE_ITEMS = [
     label: '近くのお店',
     type: 'location'
   }
-]
+].freeze
 RECOMMEND_MORE_ITEMS.freeze
 
-private 
+private
 def render_shops_template(shoplist)
   columns = []
   shoplist.shops.each do |shop|

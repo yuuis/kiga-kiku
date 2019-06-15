@@ -7,7 +7,7 @@ class ConditionRepository < Hanami::Repository
 
   def feedback_conditions(feed_backs)
     return nil if feed_backs.nil?
-     
+
     feed_backs.map { |feed_back| conditions.where(feedback_id: feed_back.id).map_to(Condition).to_a }
   end
 

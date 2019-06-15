@@ -9,7 +9,7 @@ class RecommendTransactionRepository < Hanami::Repository
   def find_by_user_id(user_id)
     transaction_expire_time = 15
     recommend_transaction = recommend_transactions.where(user_id: user_id).last
-    return nil if (Time.now - recommend_transaction) / 60 >  transaction_expire_time || recommend_transaction.nil?
+    return nil if (Time.now - recommend_transaction) / 60 > transaction_expire_time || recommend_transaction.nil?
 
     recommend_transaction
   end
