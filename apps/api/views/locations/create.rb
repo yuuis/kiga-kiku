@@ -8,4 +8,3 @@ module Api::Views::Locations
     end
   end
 end
-
