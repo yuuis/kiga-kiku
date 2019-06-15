@@ -1,5 +1,13 @@
 require_relative 'watson_parse'
 
+def get_user_id(line_event)
+  line_user_id = line_event['source']['userId']
+
+  user_rel = UserLineUserRelRepository.new.find(line_user_id: line_user_id)
+  user_id = user_rel.blank? ? nil : user_rel.user_id
+end
+
+
 def get_message(line_event, watson_reply) 
 
   # line_id = event.message['id']
@@ -17,21 +25,17 @@ end
 
 def get_recommend(line_event, watson_reply)
 
-  user_id = 1 # TODO:line_idからuser_idを抽出
-
   # 引っかかったキーワードを取得してみる
-  words = get_origin_entities(line_event.message['text'], watson_reply)
+  words = get_origin_entities(line_event.message['text'], watson_reply, "メニュー")
 
-  shops = RecommendShop.new.call(user_id, words)
+  shops = RecommendShop.new.call(get_user_id(line_event), words)
 
   render_shops_template(shops)
 end
 
 # 特にワード指定無しでレコメンド
 def get_first_recommend(line_event)
-  user_id = 1 # TODO:line_idからuser_idを抽出
-
-  shops = RecommendShop.new.call(user_id, ["ラーメン"])
+  shops = RecommendShop.new.call(get_user_id(line_event), ["ラーメン"])
 
   render_shops_template(shops)
 end
