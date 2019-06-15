@@ -9,26 +9,30 @@ class RecommendShop
   expose :shops
 
   # TODO: とりあえず緯度/経度は八王子にする
-  def call(user_id, words, latitude = '35.65562', longitude = '139.3366642')
+  def call(user_id, words, latitude = '35.65562', longitude = '139.3366642', past_conditions = nil)
     user = UserRepository.new.find(user_id)
 
     return nil if user.nil?
 
-    @shops = recommend(user, words, latitude, longitude)
+    @shops = recommend(user, words, latitude, longitude, past_conditions)
   end
 
   private
 
-  def recommend(user, search_word, latitude, longitude)
+  def recommend(user, search_word, latitude, longitude, past_conditions)
     conditions = {
       keyword: search_word.join(' ')
     }
 
-    conditions = add_condition_tavern(conditions)
-    conditions = add_condition_midnight(conditions)
-    conditions = add_condition_budget(conditions, user)
-    # conditions = add_condition_range(conditions, latitude, longitude)
-    conditions = add_condition_user_feedback(conditions, user)
+    if past_conditions.nil?
+      conditions = add_condition_tavern(conditions)
+      conditions = add_condition_midnight(conditions)
+      conditions = add_condition_budget(conditions, user)
+      conditions = add_condition_range(conditions, latitude, longitude)
+      conditions = add_condition_user_feedback(conditions, user)
+    else
+      conditions = past_conditions
+    end
 
     get_shops(conditions)
   end
@@ -55,12 +59,11 @@ class RecommendShop
   end
 
   # ユーザのいる位置を条件に足す
-  # def add_condition_range(conditions, latitude, longitude)
-  #   # 挙動がおかしいので一時コメントアウト
-  #   return conditions if latitude.nil? || longitude.nil?
+  def add_condition_range(conditions, latitude, longitude)
+    return conditions if latitude.nil? || longitude.nil?
 
-  #   conditions.merge(lat: latitude, lng: longitude, range: 3)
-  # end
+    conditions.merge(lat: latitude, lng: longitude, range: 3)
+  end
 
   # ユーザの年齢によって予算を条件に足す
   def add_condition_budget(conditions, user)

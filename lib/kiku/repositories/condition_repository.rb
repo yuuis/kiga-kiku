@@ -5,7 +5,48 @@ class ConditionRepository < Hanami::Repository
     belongs_to :feedback
   end
 
-  def feedback_conditions(feedbacks)
-    feedbacks.map { |feedback| conditions.where(feedback_id: feedback.id).map_to(Condition).to_a }
+  def feedback_conditions(feed_backs)
+    feed_backs.map { |feed_back| conditions.where(feedback_id: feed_back.id).map_to(Condition).to_a }
+  end
+
+  # TODO: とりあえず固定で もっと~ になりそうなものを返す
+  def more_conditions
+    {
+      cheaper: 'もっと安い',
+      more_expensive: 'もっと高い',
+      closer: 'もっと近い',
+      farther: 'もっと遠い'
+    }
+  end
+
+  def cheaper(conditions)
+    past_budget_code = conditions[:budget]
+    conditions[:budget] = budgets[budgets.index(past_budget_code) - 1] unless past_budget_code === 'B009'
+    conditions
+  end
+
+  def more_expensive(conditions)
+    past_budget_code = conditions[:budget]
+    conditions[:budget] = budgets[budgets.index(past_budget_code) + 1] unless past_budget_code === 'B014'
+    conditions
+  end
+
+  def closer(conditions)
+    past_range = conditions[:range]
+    conditions[:range] = past_range - 1 unless past_range === 1
+    conditions
+  end
+
+  def farther(conditions)
+    past_range = conditions[:range]
+    conditions[:range] = past_range + 1 unless past_range === 5
+    conditions
+  end
+
+  private
+
+  def budgets
+    # TODO: 直書きしてるけど、DBにマスタデータが入っているので、金額順にして取得するほうが良い
+    %w[B009 B010 B011 B001 B002 B003 B008 B004 B005 B006 B012 B013 B014]
   end
 end

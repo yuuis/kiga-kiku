@@ -5,4 +5,3 @@ class RecommendConversationRepository < Hanami::Repository
     belongs_to :recommend_transaction
   end
 end
-
