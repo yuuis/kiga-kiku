@@ -53,3 +53,10 @@ def get_recommend(line_event, watson_reply)
     }
   }
 end
+
+def get_add_friend
+  {
+    type: 'text',
+    text: '友達登録ありがとうにゃ！'
+  }
+end
