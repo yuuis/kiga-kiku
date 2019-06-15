@@ -21,25 +21,25 @@ class ConditionRepository < Hanami::Repository
 
   def cheaper(conditions)
     past_budget_code = conditions[:budget]
-    conditions[:budget] = budgets[budgets.index(past_budget_code) - 1] unless past_budget_code === 'B009'
+    conditions[:budget] = budgets[budgets.index(past_budget_code) - 1] unless past_budget_code == 'B009'
     conditions
   end
 
   def more_expensive(conditions)
     past_budget_code = conditions[:budget]
-    conditions[:budget] = budgets[budgets.index(past_budget_code) + 1] unless past_budget_code === 'B014'
+    conditions[:budget] = budgets[budgets.index(past_budget_code) + 1] unless past_budget_code == 'B014'
     conditions
   end
 
   def closer(conditions)
     past_range = conditions[:range]
-    conditions[:range] = past_range - 1 unless past_range === 1
+    conditions[:range] = past_range - 1 unless past_range == 1
     conditions
   end
 
   def farther(conditions)
     past_range = conditions[:range]
-    conditions[:range] = past_range + 1 unless past_range === 5
+    conditions[:range] = past_range + 1 unless past_range == 5
     conditions
   end
 

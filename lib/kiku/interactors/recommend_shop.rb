@@ -34,7 +34,11 @@ class RecommendShop
       conditions = past_conditions
     end
 
-    get_shops(conditions)
+    shops = get_shops(conditions)
+
+    shops = recommend(user, search_word, latitude, longitude, ConditionRepository.new.farther(conditions)) if shops.empty? && conditions[:range] < 5
+
+    shops
   end
 
   # 金曜、土曜であれば居酒屋を条件に足す
