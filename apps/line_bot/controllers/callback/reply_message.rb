@@ -101,9 +101,9 @@ RECOMMEND_MORE_ITEMS = [
 RECOMMEND_MORE_ITEMS.freeze
 
 private
-def render_shops_template(shoplist)
+def render_shops_template(shops)
   columns = []
-  shoplist.shops.each do |shop|
+  shops.shops.each do |shop|
     columns << {
       thumbnailImageUrl: shop['photo']['pc']['l'],
       title: shop['name'],
