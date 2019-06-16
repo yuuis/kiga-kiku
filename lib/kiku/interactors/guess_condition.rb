@@ -32,7 +32,7 @@ class GuessCondition
 
     shops = get_shops(user)
     points = calculate(shops)
-    points[:other].max_by(3) { |_item_1, item_2| item_2 }.to_h
+    points[:other].max_by(3) { |_item1, item2| item2 }.to_h
   end
 
   def guess_dislike(user)
