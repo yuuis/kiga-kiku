@@ -40,6 +40,7 @@ module LineBot::Controllers::Callback
 
         case event
         when Line::Bot::Event::Follow
+          line_user_id = event['source']['userId']
           if user_id.blank?
             user = UserRepository.new.create(name: 'name_1')
             UserLineUserRelRepository.new.create(user_id: user.id, line_user_id: line_user_id)
