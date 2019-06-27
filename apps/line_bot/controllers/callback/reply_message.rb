@@ -24,7 +24,7 @@ def get_recommend(line_event, watson_reply)
   # 引っかかったキーワードを取得してみる
   words = get_origin_entities(line_event.message['text'], watson_reply, 'メニュー')
 
-  location = LocationRepository.new.find(user_id: params.get(:user_id))
+  location = LocationRepository.new.latest(params.get(:user_id))
   latitude, longitude = location.latitude, location.longitude unless location.nil?
 
   shops = RecommendShop.new.call(user_id = get_user_id(line_event), words = words, latitude = latitude, longitude = longitude)
@@ -34,7 +34,7 @@ end
 
 # 特にワード指定無しでレコメンド
 def get_first_recommend(line_event)
-  location = LocationRepository.new.find(user_id: params.get(:user_id))
+  location = LocationRepository.new.latest(params.get(:user_id))
   latitude, longitude = location.latitude, location.longitude unless location.nil?
 
   shops = RecommendShop.new.call(user_id = get_user_id(line_event), words = ['ラーメン'], latitude = latitude, longitude = longitude)
