@@ -131,7 +131,7 @@ def parse_carousel_message(columns)
 end
 
 def get_recommend_sample(userid, word)
-  location = LocationRepository.new.find(user_id: params.get(:user_id))
+  location = LocationRepository.new.latest(params.get(:user_id))
   latitude, longitude = location.latitude, location.longitude unless location.nil?
 
   shops = RecommendShop.new.call(user_id = userid, words = word.split(/[,\n*| ]/), latitude = latitude, longitude = longitude)
