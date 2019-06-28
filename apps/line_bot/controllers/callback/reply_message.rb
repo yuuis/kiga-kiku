@@ -3,7 +3,7 @@ require_relative 'watson_parse'
 def get_user_id(line_event)
   line_user_id = line_event['source']['userId']
 
-  user_rel = UserLineUserRelRepository.new.find(line_user_id: line_user_id)
+  user_rel = UserLineUserRelRepository.new.find_by_line_user_id(line_user_id: line_user_id)
   user_id = user_rel.blank? ? nil : user_rel.user_id
 end
 
