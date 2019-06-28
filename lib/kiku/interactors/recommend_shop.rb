@@ -66,7 +66,7 @@ class RecommendShop
   def add_condition_range(conditions, latitude, longitude)
     return conditions if latitude.nil? || longitude.nil?
 
-    conditions.merge(latitude: latitude, longitude: longitude, range: 3)
+    conditions.merge(latitude: lat, longitude: lng, range: 3)
   end
 
   # ユーザの年齢によって予算を条件に足す
