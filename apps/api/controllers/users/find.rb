@@ -14,7 +14,9 @@ module Api::Controllers::Users
 
     def call(params)
       halt 400 unless params.valid?
-      @user_id = UserLineUserRelRepository.new.find(line_user_id: params.get(:line_user_id)).user_id
+      rel = UserLineUserRelRepository.new.find(line_user_id: params.get(:line_user_id))
+
+      @user_id = rel.user_id unless rel.nil?
     end
 
     private
