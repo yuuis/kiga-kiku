@@ -36,13 +36,17 @@ module LineBot::Controllers::Callback
       events = client.parse_events_from(body)
 
       events.each do |event|
+        # きくにゃんユーザーIDを取得
         user_id = get_user_id(event)
-
+        
+        profile = client.get_profile(event['source']['userId'])
+        profile = JSON.parse(profile.read_body)
+        
         case event
         when Line::Bot::Event::Follow
           line_user_id = event['source']['userId']
           if user_id.blank?
-            user = UserRepository.new.create(name: 'name_1')
+            user = UserRepository.new.create(name: profile['displayName'])
             UserLineUserRelRepository.new.create(user_id: user.id, line_user_id: line_user_id)
 
             message = get_add_friend
@@ -85,23 +89,24 @@ module LineBot::Controllers::Callback
 
               # watsonによる返信文を生成して格納
               message << get_message(event, watson_result)
-
-              if watson_entities.include?('メニュー')
-                message << get_recommend(event, watson_result).merge(get_quick_reply(['もっと安い', '近くのお店']))
+              if watson_entities.include?('精度向上キーワード')
+              
+              elsif watson_entities.include?('メニュー')
+                message << get_recommend(event, watson_result).merge(get_quick_reply(['もっと安い', 'もっと近く' ,'近くのお店']))
               elsif watson_entities.include?('起動ワード')
-                message << get_first_recommend(event).merge(get_quick_reply(['もっと安い', '近くのお店']))
+                message << get_first_recommend(event).merge(get_quick_reply(['もっと安い', 'もっと近く', '近くのお店']))
               end
 
-              # UIデバッグ用の、サンプルキーテキスト受信用 ========================
-              reply_debug = false
-              if reply_debug
-                message << check_lexical(event.message['text'])
-                if message
-                  client.reply_message(event['replyToken'], message)
-                  return true
-                end
-              end
-              # ============================================================
+              # # UIデバッグ用の、サンプルキーテキスト受信用 ========================
+              # reply_debug = false
+              # if reply_debug
+              #   message << check_lexical(event.message['text'])
+              #   if message
+              #     client.reply_message(event['replyToken'], message)
+              #     return true
+              #   end
+              # end
+              # # ============================================================
 
             else
               message = get_message(event, watson_result)
