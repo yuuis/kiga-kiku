@@ -90,7 +90,9 @@ module LineBot::Controllers::Callback
               # watsonによる返信文を生成して格納
               message << get_message(event, watson_result)
               if watson_entities.include?('精度向上キーワード')
-              
+                # =========================================
+                #  もっと〜〜が来た時に制度を上げた状態で返す方法
+                # =========================================
               elsif watson_entities.include?('メニュー')
                 message << get_recommend(event, watson_result).merge(get_quick_reply(['もっと安い', 'もっと近く' ,'近くのお店']))
               elsif watson_entities.include?('起動ワード')
