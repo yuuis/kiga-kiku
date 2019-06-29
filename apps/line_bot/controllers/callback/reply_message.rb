@@ -109,24 +109,31 @@ RECOMMEND_MORE_ITEMS.freeze
 private
 def render_shops_template(shops)
   columns = []
-  shops.shops.each do |shop|
-    columns << {
-      thumbnailImageUrl: shop['photo']['pc']['l'],
-      title: shop['name'],
-      text: shop['catch'],
-      actions: [
-        {
-          type: 'message',
-          label: 'ここにする',
-          text: 'ここにする'
-        },
-        {
-          type: 'uri',
-          label: '詳しくみる',
-          uri: shop['urls']['pc']
-        }
-      ]
+  if shops.shops.blank?
+    return {
+      type: 'text',
+      text: '近くにお店が見当たらなかったにゃ……'
     }
+  else
+    shops.shops.each do |shop|
+      columns << {
+        thumbnailImageUrl: shop['photo']['pc']['l'],
+        title: shop['name'],
+        text: shop['catch'],
+        actions: [
+          {
+            type: 'message',
+            label: 'ここにする',
+            text: 'ここにする'
+          },
+          {
+            type: 'uri',
+            label: '詳しくみる',
+            uri: shop['urls']['pc']
+          }
+        ]
+      }
+    end
   end
 
   {
