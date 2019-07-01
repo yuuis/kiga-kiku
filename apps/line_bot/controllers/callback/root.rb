@@ -17,36 +17,32 @@ module LineBot::Controllers::Callback
       end
     end
 
-    def call(_params)
-      body = request.body.read
-      message = []
-
-      # 先にWatsonの接続
-      assistant = IBMWatson::AssistantV2.new(
+    def assistant
+      @assistant = IBMWatson::AssistantV2.new(
         version: '2018-09-17',
         username: ENV['WATSON_USERNAME'],
         password: ENV['WATSON_PASSWORD']
       )
+    end
+
+    def call(_params)
+      body = request.body.read
+      line = CreateReplyMessage.new(body)
 
       # LINEからのヘッダー解析
       signature = request.env['HTTP_X_LINE_SIGNATURE']
-      status 400, 'Bad request' unless client.validate_signature(body, signature)
+      status 400, 'Bad request' unless line.hasSignature(signature)
 
-      # LINEからのイベントを取得
-      events = client.parse_events_from(body)
-
-      events.each do |event|
-        user_id = get_user_id(event)
-
+      line.get_events.each do |event|
+        # イベント情報をクラスに格納
         case event
         when Line::Bot::Event::Follow
           line_user_id = event['source']['userId']
-          if user_id.blank?
-            user = UserRepository.new.create(name: 'name_1')
-            UserLineUserRelRepository.new.create(user_id: user.id, line_user_id: line_user_id)
-
-            message = get_add_friend
-            client.reply_message(event['replyToken'], message)
+          if line.registered?
+            line.user_register
+            
+            line.set_register_thanks
+            line.send_message(event)
           end
           break
         when Line::Bot::Event::Message
@@ -75,7 +71,9 @@ module LineBot::Controllers::Callback
             )
             watson_result = response.result
 
-            Hanami.logger.debug watson_result.to_json
+            reply_message.set_watson_result(watson_result)
+
+            # Hanami.logger.debug watson_result.to_json
 
             message = []
 
