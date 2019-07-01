@@ -74,7 +74,7 @@ class CreateReplyMessage < LineManager
   def get_more_condition
     lists = []
     more_conditions = ConditionRepository.new.more_conditions
-    lists = more_conditions.find {|key, value| value }
+    lists = more_conditions.values
     more_items = more_condition_items.select { |item| lists.include?(item[:label]) }
     more_items.empty? ? {} : create_quick_reply(more_items)
   end
