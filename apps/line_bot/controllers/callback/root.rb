@@ -81,7 +81,9 @@ module LineBot::Controllers::Callback
 
             watson_entities = pull_entities(get_entities(watson_result))
 
-            unless watson_entities.nil?
+            if watson_entities.nil?
+              message = get_message(event, watson_result)
+            else
 
               # watsonによる返信文を生成して格納
               message << get_message(event, watson_result)
@@ -103,8 +105,6 @@ module LineBot::Controllers::Callback
               end
               # ============================================================
 
-            else
-              message = get_message(event, watson_result)
             end
 
             # 最後に送信
