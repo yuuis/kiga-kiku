@@ -19,7 +19,7 @@ module Api::Controllers::Shops
       location = LocationRepository.new.latest(params.get(:user_id))
       latitude, longitude = location.latitude, location.longitude unless location.nil?
 
-      @shops = RecommendShop.new.call(user_id = params.get(:user_id), words = params.get(:words).split(','), latitude = latitude, longitude = longitude)
+      @shops = RecommendShop.new.call(user_id = params.get(:user_id), words = params.get(:words).split(','), latitude = latitude, longitude = longitude).recommend_result
     end
 
     private

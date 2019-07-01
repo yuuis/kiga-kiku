@@ -25,9 +25,12 @@ def get_recommend(line_event, watson_reply)
   words = get_origin_entities(line_event.message['text'], watson_reply, 'メニュー')
 
   location = LocationRepository.new.latest(get_user_id(line_event))
-  latitude, longitude = location.latitude, location.longitude unless location.nil?
+  unless location.nil?
+    latitude = location.latitude
+    longitude = location.longitude
+  end
 
-  shops = RecommendShop.new.call(user_id = get_user_id(line_event), words = words, latitude = latitude, longitude = longitude)
+  shops = RecommendShop.new.call(user_id = get_user_id(line_event), words = words, latitude = latitude, longitude = longitude).recommend_result[:shops]
 
   render_shops_template(shops)
 end
@@ -35,9 +38,12 @@ end
 # 特にワード指定無しでレコメンド
 def get_first_recommend(line_event)
   location = LocationRepository.new.latest(get_user_id(line_event))
-  latitude, longitude = location.latitude, location.longitude unless location.nil?
+  unless location.nil?
+    latitude = location.latitude
+    longitude = location.longitude
+  end
 
-  shops = RecommendShop.new.call(user_id = get_user_id(line_event), words = ['ラーメン'], latitude = latitude, longitude = longitude)
+  shops = RecommendShop.new.call(user_id = get_user_id(line_event), words = ['ラーメン'], latitude = latitude, longitude = longitude).recommend_result[:shops]
 
   render_shops_template(shops)
 end

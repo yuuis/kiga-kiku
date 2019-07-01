@@ -6,7 +6,7 @@ require 'date'
 class RecommendShop
   include Hanami::Interactor
 
-  expose :shops
+  expose :recommend_result
 
   # TODO: とりあえず緯度/経度は八王子にする
   def call(user_id, words, latitude = '35.65562', longitude = '139.3366642', past_conditions = nil)
@@ -14,7 +14,7 @@ class RecommendShop
 
     return nil if user.nil?
 
-    @shops = recommend(user, words, latitude, longitude, past_conditions)
+    @recommend_result = recommend(user, words, latitude, longitude, past_conditions)
   end
 
   private
@@ -38,7 +38,7 @@ class RecommendShop
 
     shops = recommend(user, search_word, latitude, longitude, ConditionRepository.new.farther(conditions)) if shops.empty? && conditions[:range] < 5
 
-    shops
+    { shops: shops, conditions: conditions }
   end
 
   # 金曜、土曜であれば居酒屋を条件に足す

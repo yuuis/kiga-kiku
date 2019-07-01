@@ -4,7 +4,7 @@ module Api::Views::Shops
     layout false
 
     def render
-      shops.shops.nil? ? '[]' : _raw(shops.shops.to_json)
+      shops[:shops].nil? ? '[]' : _raw(shops[:shops].to_json)
     end
   end
 end
