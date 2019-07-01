@@ -59,7 +59,10 @@ class CreateReplyMessage < LineManager
     location = LocationRepository.new.latest(get_user_id)
     latitude, longitude = location.latitude, location.longitude unless location.nil?
     
-    shops = RecommendShop.new.call(user_id = get_user_id, words = words, latitude = latitude, longitude = longitude, past_conditions = past_conditions )
+    recommend = RecommendShop.new.call(user_id = get_user_id, words = words, latitude = latitude, longitude = longitude, past_conditions = past_conditions )
+    shops = recommend.recommend_result[:shops]
+    conditions = recommend.recommend_result[:conditions]
+
     @reply_message << render_shops_template(shops).merge(get_more_condition)
   end
   
@@ -104,14 +107,14 @@ class CreateReplyMessage < LineManager
   private
   def render_shops_template(shops)
     columns = []
-    if shops.shops.blank?
+    if shops.blank?
       reset_reply_message()
 	    return {
 	      type: 'text',
 	      text: '近くにお店が見当たらなかったにゃ……'
 	    }
 	  else
-      shops.shops.each do |shop|
+      shops.each do |shop|
         columns << {
           thumbnailImageUrl: shop['photo']['pc']['l'],
           title: shop['name'],
