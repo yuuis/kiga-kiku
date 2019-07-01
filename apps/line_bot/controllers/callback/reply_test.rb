@@ -132,9 +132,12 @@ end
 
 def get_recommend_sample(userid, word)
   location = LocationRepository.new.latest(params.get(:user_id))
-  latitude, longitude = location.latitude, location.longitude unless location.nil?
+  unless location.nil?
+    latitude = location.latitude
+    longitude = location.longitude
+  end
 
-  shops = RecommendShop.new.call(user_id = userid, words = word.split(/[,\n*| ]/), latitude = latitude, longitude = longitude)
+  shops = RecommendShop.new.call(user_id = userid, words = word.split(/[,\n*| ]/), latitude = latitude, longitude = longitude).recommend_result[:shops]
 
   Hanami.logger.debug word.split(/[,\n*| ]/)
 
