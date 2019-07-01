@@ -34,8 +34,8 @@ module LineBot::Controllers::Callback
       status 400, 'Bad request' unless line.hasSignature(signature)
 
       line.get_events.each do |event|
-        # イベント情報をクラスに格納
         case event
+
         when Line::Bot::Event::Follow
           line_user_id = event['source']['userId']
           if line.registered?
@@ -45,68 +45,57 @@ module LineBot::Controllers::Callback
             line.send_message(event)
           end
           break
+
         when Line::Bot::Event::Message
           case event.type
           when Line::Bot::Event::MessageType::Location
+            # WIP:最新位置情報を更新
             message = {
               type: 'text',
               text: event.message['address']
             }
             client.reply_message(event['replyToken'], message)
             break
-          when Line::Bot::Event::MessageType::Text # テキストが送られてきた場合
 
+          when Line::Bot::Event::MessageType::Text
             # 文章解析を行う
             # 1. セッションを生成
             watson_session = assistant.create_session(
               assistant_id: ENV['WATSON_ASSISTANT_ID']
             )
-            session_id = watson_session.result['session_id']
-
             # 2. セッション情報を入力してレスポンスを受け取る
             response = assistant.message(
               assistant_id: ENV['WATSON_ASSISTANT_ID'],
-              session_id: session_id,
+              session_id: watson_session.result['session_id'],
               input: { text: event.message['text'] }
             )
             watson_result = response.result
 
-            reply_message.set_watson_result(watson_result)
-
+            line.set_watson_result(watson_result)
             # Hanami.logger.debug watson_result.to_json
-
-            message = []
 
             watson_entities = pull_entities(get_entities(watson_result))
 
-            if watson_entities.nil?
-              message = get_message(event, watson_result)
+            unless watson_entities.nil?
+              line.set_recommend_shop
+            
+              # # UIデバッグ用の、サンプルキーテキスト受信用 ========================
+              # reply_debug = false
+              # if reply_debug
+              #   message << check_lexical(event.message['text'])
+              #   if message
+              #     client.reply_message(event['replyToken'], message)
+              #     return true
+              #   end
+              # end
+              # # ============================================================
+
             else
-
-              # watsonによる返信文を生成して格納
-              message << get_message(event, watson_result)
-
-              if watson_entities.include?('メニュー')
-                message << get_recommend(event, watson_result)
-              elsif watson_entities.include?('起動ワード')
-                message << get_first_recommend(event) # .merge(get_quick_reply(['もっと安い', '近くのお店']))
-              end
-
-              # UIデバッグ用の、サンプルキーテキスト受信用 ========================
-              reply_debug = false
-              if reply_debug
-                message << check_lexical(event.message['text'])
-                if message
-                  client.reply_message(event['replyToken'], message)
-                  return true
-                end
-              end
-              # ============================================================
-
+              line.set_watson_text_reply
             end
 
             # 最後に送信
-            client.reply_message(event['replyToken'], message)
+            line.send_message(event)
           end
         end
       end

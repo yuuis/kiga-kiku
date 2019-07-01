@@ -38,8 +38,8 @@ class LineManager
   end
 
   def user_register
-    @user = UserRepository.new.create(name: @display_name)
-    UserLineUserRelRepository.new.create(user_id: @user.id, line_user_id: @line_id)
+    user = UserRepository.new.create(name: @display_name)
+    UserLineUserRelRepository.new.create(user_id: user.id, line_user_id: @line_id)
   end
 
 end
