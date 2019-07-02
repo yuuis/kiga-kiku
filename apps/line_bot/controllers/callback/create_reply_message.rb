@@ -52,11 +52,11 @@ class CreateReplyMessage < LineManager
     recommend_transaction_repository = RecommendTransactionRepository.new
     recommend_conversation_repository = RecommendConversationRepository.new
     transaction = recommend_transaction_repository.find_by_user_id(user_id: self.user_id)
-    conversation = recommend_conversation_repository.find_by_transaction(transaction: transaction) unless transaction.nil?
+    conversation = recommend_conversation_repository.find_by_transaction(transaction: transaction.id) unless transaction.nil?
 
     if transaction.nil?
       transaction = recommend_transaction_repository.create(user_id: self.user_id)
-      conversation = recommend_conversation_repository.create(recommend_transaction_id: transaction.id)
+      # conversation = recommend_conversation_repository.create(recommend_transaction_id: transaction.id)
     end
 
     if watson_entities.include?('精度向上キーワード')
@@ -84,7 +84,7 @@ class CreateReplyMessage < LineManager
     conditions = recommend.recommend_result[:conditions]
 
     # WIP: [create recommend conversation]
-    # recommend_conversation_repository.create(recommend_transaction_id: transaction.id, conditions: conditions, user_word: @user_message, bot_word: self.reply_message_text)
+    recommend_conversation_repository.create(recommend_transaction_id: transaction.id, conditions: conditions.to_json, user_word: @user_message, bot_word: self.reply_message_text)
 
     @reply_message << render_shops_template(shops).merge(self.get_more_condition)
   end
