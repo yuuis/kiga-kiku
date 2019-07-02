@@ -18,7 +18,7 @@ class CreateReplyMessage < LineManager
   end
 
   def reply_message_text
-    text_reply = @reply_message.find{|item| item[:type] === 'text'}
+    text_reply = @reply_message.find { |item| item[:type] === 'text' }
     text_reply[:text] unless text_reply.nil?
   end
 
@@ -51,11 +51,11 @@ class CreateReplyMessage < LineManager
     # Transaction and Conversation
     recommend_transaction_repository = RecommendTransactionRepository.new
     recommend_conversation_repository = RecommendConversationRepository.new
-    transaction = recommend_transaction_repository.find_by_user_id(user_id: self.user_id)
+    transaction = recommend_transaction_repository.find_by_user_id(user_id: user_id)
     conversation = recommend_conversation_repository.find_by_transaction(transaction: transaction.id) unless transaction.nil?
 
     if transaction.nil?
-      transaction = recommend_transaction_repository.create(user_id: self.user_id)
+      transaction = recommend_transaction_repository.create(user_id: user_id)
       # conversation = recommend_conversation_repository.create(recommend_transaction_id: transaction.id)
     end
 
@@ -63,8 +63,8 @@ class CreateReplyMessage < LineManager
       words = ['ラーメン'] # WIP:前回のワードを取得
 
       user_request = 'もっと安い' # WIP:ユーザが送ってきた要望「もっと**」
-      past_conditions = ConditionRepository.new.condition_checks(user_request, {keyword: "ラーメン"}) # WIP: conditionを取得して格納
-      
+      past_conditions = ConditionRepository.new.condition_checks(user_request, keyword: 'ラーメン') # WIP: conditionを取得して格納
+
     elsif watson_entities.include?('メニュー')
       words = get_origin_entities(@user_message, @watson_result, 'メニュー') # watsonのメニューに引っかかった
     elsif watson_entities.include?('起動ワード')
@@ -72,21 +72,22 @@ class CreateReplyMessage < LineManager
       words = ['ラーメン']
     end
 
-    location = LocationRepository.new.latest(self.user_id)
+    location = LocationRepository.new.latest(user_id)
     unless location.nil?
       latitude = location.latitude
       longitude = location.longitude
     end
-    
+
     recommend = RecommendShop.new.call(user_id = self.user_id, words = words, latitude = latitude, longitude = longitude, past_conditions = past_conditions)
-    return self.cannot_found_recommend_shop if recommend.recommend_result.nil?
+    return cannot_found_recommend_shop if recommend.recommend_result.nil?
+
     shops = recommend.recommend_result[:shops]
     conditions = recommend.recommend_result[:conditions]
 
     # WIP: [create recommend conversation]
-    recommend_conversation_repository.create(recommend_transaction_id: transaction.id, conditions: conditions.to_json, user_word: @user_message, bot_word: self.reply_message_text)
+    recommend_conversation_repository.create(recommend_transaction_id: transaction.id, conditions: conditions.to_json, user_word: @user_message, bot_word: reply_message_text)
 
-    @reply_message << render_shops_template(shops).merge(self.get_more_condition)
+    @reply_message << render_shops_template(shops).merge(get_more_condition)
   end
 
   # 友達追加時に実行
@@ -96,7 +97,7 @@ class CreateReplyMessage < LineManager
       text: '友達登録ありがとうにゃ！'
     }
   end
-  
+
   # ユーザーIDを取得できなかった時
   def connot_get_user_id
     reset_reply_message
@@ -104,7 +105,7 @@ class CreateReplyMessage < LineManager
       type: 'text',
       text: 'ユーザー情報を取得できなかったにゃ……。一度ブロックして、もう一回追加して欲しいにゃ。'
     }
-    self.send_message(@events.first)
+    send_message(@events.first)
   end
 
   def get_more_condition
