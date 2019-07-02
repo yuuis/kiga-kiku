@@ -45,8 +45,7 @@ class CreateReplyMessage < LineManager
   def recommend_shop
     return if @watson_result.blank?
 
-    watson_text_reply # ワトソンの応答を送る
-
+    watson_text_reply
     watson_entities = pull_entities(get_entities(@watson_result))
 
     # Transaction and Conversation
@@ -54,7 +53,7 @@ class CreateReplyMessage < LineManager
     recommend_conversation_repository = RecommendConversationRepository.new
     transaction = recommend_transaction_repository.find_by_user_id(user_id: self.user_id)
     conversation = recommend_conversation_repository.find_by_transaction(transaction: transaction) unless transaction.nil?
-  
+
     if transaction.nil?
       transaction = recommend_transaction_repository.create(user_id: self.user_id)
       conversation = recommend_conversation_repository.create(recommend_transaction_id: transaction.id)
@@ -64,7 +63,7 @@ class CreateReplyMessage < LineManager
       words = ['ラーメン'] # WIP:前回のワードを取得
 
       user_request = 'もっと安い' # WIP:ユーザが送ってきた要望「もっと**」
-      past_conditions = ConditionRepository.new.condition_checks(user_request, nil) # WIP: conditionを取得して格納
+      past_conditions = ConditionRepository.new.condition_checks(user_request, {keyword: "ラーメン"}) # WIP: conditionを取得して格納
       
     elsif watson_entities.include?('メニュー')
       words = get_origin_entities(@user_message, @watson_result, 'メニュー') # watsonのメニューに引っかかった
@@ -80,13 +79,12 @@ class CreateReplyMessage < LineManager
     end
     
     recommend = RecommendShop.new.call(user_id = self.user_id, words = words, latitude = latitude, longitude = longitude, past_conditions = past_conditions)
-
     return self.cannot_found_recommend_shop if recommend.recommend_result.nil?
-
     shops = recommend.recommend_result[:shops]
     conditions = recommend.recommend_result[:conditions]
-    binding.pry
-    recommend_conversation_repository.create(recommend_transaction_id: transaction.id, conditions: conditions, user_word: @user_message, bot_word: self.reply_message_text)
+
+    # WIP: [create recommend conversation]
+    # recommend_conversation_repository.create(recommend_transaction_id: transaction.id, conditions: conditions, user_word: @user_message, bot_word: self.reply_message_text)
 
     @reply_message << render_shops_template(shops).merge(self.get_more_condition)
   end
