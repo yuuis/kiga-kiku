@@ -8,6 +8,10 @@ class CreateReplyMessage < LineManager
     @reply_message = []
   end
 
+  def user_send_message(event)
+    @user_message = event.message['text'] unless event === Line::Bot::Event::Message
+  end
+
   # リプライメッセージを初期化
   def reset_reply_message
     @reply_message = []
@@ -52,7 +56,6 @@ class CreateReplyMessage < LineManager
     elsif watson_entities.include?('メニュー')
       words = get_origin_entities(@user_message, @watson_result, 'メニュー') # watsonのメニューに引っかかった
     elsif watson_entities.include?('起動ワード')
-      binding.pry
       transaction = RecommendTransactionRepository.new.create(user_id: user_id) if transaction.nil?
       RecommendConversationRepository.new.create(recommend_transaction_id: transaction.id)
       
@@ -65,8 +68,11 @@ class CreateReplyMessage < LineManager
       latitude = location.latitude
       longitude = location.longitude
     end
-
+    
     recommend = RecommendShop.new.call(user_id = user_id, words = words, latitude = latitude, longitude = longitude, past_conditions = past_conditions)
+
+    return cannot_found_recommend_shop if recommend.recommend_result.nil?
+
     shops = recommend.recommend_result[:shops]
     conditions = recommend.recommend_result[:conditions]
 
@@ -110,16 +116,20 @@ class CreateReplyMessage < LineManager
     }
   end
 
+  def cannot_found_recommend_shop
+    reset_reply_message
+    @reply_message << {
+      type: 'text',
+      text: '近くにお店が見当たらなかったにゃ……'
+    }
+  end
+
   private
 
   def render_shops_template(shops)
     columns = []
     if shops.blank?
-      reset_reply_message
-      return {
-        type: 'text',
-        text: '近くにお店が見当たらなかったにゃ……'
-      }
+      cannot_found_recommend_shop
     else
       shops.each do |shop|
         columns << {

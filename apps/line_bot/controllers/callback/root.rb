@@ -36,13 +36,12 @@ module LineBot::Controllers::Callback
 
         when Line::Bot::Event::Follow
           line_user_id = event['source']['userId']
-          if line.registered?
+          unless line.registered?
             line.user_register
 
             line.register_thanks_reply
             line.send_message(event)
           end
-          break
 
         when Line::Bot::Event::Message
           case event.type

@@ -16,10 +16,9 @@ class LineManager
     @events = client.parse_events_from(body)
 
     @line_id = @events.first['source']['userId']
-    @display_name = client.get_profile(@line_id)
+    @profile = JSON.parse(client.get_profile(@line_id).read_body)
+    @display_name = @profile['displayName']
     @user = UserLineUserRelRepository.new.find(line_user_id: @line_id)
-
-    @user_message = @events.first.message['text'] # ユーザーが送ってきたメッセージ
   end
 
   def signature?(signature)
