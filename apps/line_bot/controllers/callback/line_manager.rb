@@ -26,7 +26,7 @@ class LineManager
   end
 
   def user_id
-    @user.blank? ? nil : @user.user_id
+    @user.user_id unless @user.blank?
   end
 
   def registered?
