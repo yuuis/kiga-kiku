@@ -23,11 +23,10 @@ class ConditionRepository < Hanami::Repository
 
   def condition_checks(word, conditions)
     case word
-    when more_conditions[:cheaper]; cheaper(conditions)
-    when more_conditions[:more_expensive]; more_expensive(conditions)
-    when more_conditions[:closer]; closer(conditions)
-    when more_conditions[:farther]; farther(conditions)
-    else nil
+    when more_conditions[:cheaper] then cheaper(conditions)
+    when more_conditions[:more_expensive] then more_expensive(conditions)
+    when more_conditions[:closer] then closer(conditions)
+    when more_conditions[:farther] then farther(conditions)
     end
   end
 

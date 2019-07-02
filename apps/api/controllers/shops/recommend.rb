@@ -17,7 +17,10 @@ module Api::Controllers::Shops
       halt 400 unless params.valid?
 
       location = LocationRepository.new.latest(params.get(:user_id))
-      latitude, longitude = location.latitude, location.longitude unless location.nil?
+      unless location.nil?
+        latitude = location.latitude
+        longitude = location.longitude
+      end
 
       @shops = RecommendShop.new.call(user_id = params.get(:user_id), words = params.get(:words).split(','), latitude = latitude, longitude = longitude).recommend_result
     end

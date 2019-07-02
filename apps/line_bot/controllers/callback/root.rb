@@ -3,8 +3,6 @@ module LineBot::Controllers::Callback
     require 'line/bot'
     require 'ibm_watson/assistant_v2'
 
-    require_relative 'reply_test'
-    require_relative 'reply_message'
     require_relative 'watson_parse'
 
     include LineBot::Action
@@ -31,17 +29,17 @@ module LineBot::Controllers::Callback
 
       # LINEからのヘッダー解析
       signature = request.env['HTTP_X_LINE_SIGNATURE']
-      status 400, 'Bad request' unless line.hasSignature(signature)
+      status 400, 'Bad request' unless line.signature?(signature)
 
-      line.get_events.each do |event|
+      line.events.each do |event|
         case event
 
         when Line::Bot::Event::Follow
           line_user_id = event['source']['userId']
           if line.registered?
             line.user_register
-            
-            line.set_register_thanks
+
+            line.register_thanks_reply
             line.send_message(event)
           end
           break
@@ -71,14 +69,16 @@ module LineBot::Controllers::Callback
             )
             watson_result = response.result
 
-            line.set_watson_result(watson_result)
+            line.register_watson_result(watson_result)
             # Hanami.logger.debug watson_result.to_json
 
             watson_entities = pull_entities(get_entities(watson_result))
 
-            unless watson_entities.nil?
-              line.set_recommend_shop
-            
+            if watson_entities.nil?
+              line.watson_text_reply
+            else
+              line.recommend_shop
+
               # # UIデバッグ用の、サンプルキーテキスト受信用 ========================
               # reply_debug = false
               # if reply_debug
@@ -90,8 +90,6 @@ module LineBot::Controllers::Callback
               # end
               # # ============================================================
 
-            else
-              line.set_watson_text_reply
             end
 
             # 最後に送信
