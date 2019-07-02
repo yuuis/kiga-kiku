@@ -26,7 +26,6 @@ end
 
 # 返信用のテキスト文を取得
 def get_reply_text(result)
-  # binding.pry
   return if result['output'].empty? || result['output']['generic'].empty?
 
   result['output']['generic'].first['text'] if result['output']['generic'].first['response_type'] == 'text'

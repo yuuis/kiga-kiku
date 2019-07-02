@@ -6,6 +6,6 @@ class RecommendConversationRepository < Hanami::Repository
   end
 
   def find_by_transaction(transaction)
-    recommend_conversations.where(transaction_id: transaction.id).map_to(RecommendConversation).to_a.last
+    recommend_conversations.where(recommend_transaction_id: transaction[:id]).map_to(RecommendConversation).to_a.last
   end
 end
