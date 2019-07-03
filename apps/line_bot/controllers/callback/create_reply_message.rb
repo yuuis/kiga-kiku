@@ -63,7 +63,11 @@ class CreateReplyMessage < LineManager
       words = ['ラーメン'] # WIP:前回のワードを取得
 
       user_request = 'もっと安い' # WIP:ユーザが送ってきた要望「もっと**」
-      past_conditions = ConditionRepository.new.condition_checks(user_request, keyword: 'ラーメン') # WIP: conditionを取得して格納
+      before_conditions = JSON.parse(conversation.conditions)
+
+      before_conditions = self.symbolize_keys(before_conditions)
+
+      past_conditions = ConditionRepository.new.condition_checks(user_request, before_conditions) # WIP: conditionを取得して格納
 
     elsif watson_entities.include?('メニュー')
       words = get_origin_entities(@user_message, @watson_result, 'メニュー') # watsonのメニューに引っかかった
@@ -79,10 +83,12 @@ class CreateReplyMessage < LineManager
     end
 
     recommend = RecommendShop.new.call(self.user_id, words, latitude, longitude, past_conditions)
-    return cannot_found_recommend_shop if recommend.recommend_result.nil?
-
     shops = recommend.recommend_result[:shops]
     conditions = recommend.recommend_result[:conditions]
+
+    # 返り値の形式がおかしいので対策
+    shops = shops[:shops] if shops.kind_of?(Hash) && !shops[:shops].blank?
+    return cannot_found_recommend_shop if shops.kind_of?(Hash) && shops[:shops].length < 1 || shops.length < 1
 
     recommend_conversation_repository.create(recommend_transaction_id: transaction[:id], conditions: conditions.to_json, user_word: @user_message, bot_word: reply_message_text)
 
@@ -151,10 +157,6 @@ class CreateReplyMessage < LineManager
     if shops.blank?
       cannot_found_recommend_shop
     else
-      binding.pry
-      # 返り値の形式がおかしいので対策
-      shops = shops[:shops] if shops.kind_of?(Hash) && !shops[:shops].blank?
-
       shops.each do |shop|
         columns << {
           thumbnailImageUrl: shop['photo']['pc']['l'],
@@ -224,4 +226,6 @@ class CreateReplyMessage < LineManager
       }
     ]
   end
+
+
 end
