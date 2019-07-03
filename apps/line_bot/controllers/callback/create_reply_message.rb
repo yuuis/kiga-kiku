@@ -76,7 +76,7 @@ class CreateReplyMessage < LineManager
       longitude = location.longitude
     end
 
-    recommend = RecommendShop.new.call(user_id = self.user_id, words = words, latitude = latitude, longitude = longitude, past_conditions = past_conditions)
+    recommend = RecommendShop.new.call(self.user_id, words, latitude, longitude, past_conditions)
     return cannot_found_recommend_shop if recommend.recommend_result.nil?
 
     shops = recommend.recommend_result[:shops]
