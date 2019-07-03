@@ -3,6 +3,8 @@ require_relative 'line_manager'
 require 'line/bot'
 
 class CreateReplyMessage < LineManager
+  attr_reader :user_message
+
   def initialize(body)
     super
     @reply_message = []
@@ -82,7 +84,6 @@ class CreateReplyMessage < LineManager
     shops = recommend.recommend_result[:shops]
     conditions = recommend.recommend_result[:conditions]
 
-    # WIP: [create recommend conversation]
     recommend_conversation_repository.create(recommend_transaction_id: transaction[:id], conditions: conditions.to_json, user_word: @user_message, bot_word: reply_message_text)
 
     @reply_message << render_shops_template(shops).merge(get_more_condition)
@@ -150,6 +151,10 @@ class CreateReplyMessage < LineManager
     if shops.blank?
       cannot_found_recommend_shop
     else
+      binding.pry
+      # 返り値の形式がおかしいので対策
+      shops = shops[:shops] if shops.kind_of?(Hash) && !shops[:shops].blank?
+
       shops.each do |shop|
         columns << {
           thumbnailImageUrl: shop['photo']['pc']['l'],

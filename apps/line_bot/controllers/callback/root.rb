@@ -51,12 +51,21 @@ module LineBot::Controllers::Callback
           case event.type
           when Line::Bot::Event::MessageType::Location
             # WIP:最新位置情報を更新
+
+            LocationRepository.new.create(
+              user_id: line.user_id,
+              latitude: event.message['latitude'],
+              longitude: event.message['longitude'],
+              altitude: 0,
+              activity_type: 'stop',
+              uuid: ''
+            )
+
             message = {
               type: 'text',
               text: event.message['address']
             }
             client.reply_message(event['replyToken'], message)
-            break
 
           when Line::Bot::Event::MessageType::Text
             # 文章解析を行う
@@ -68,7 +77,7 @@ module LineBot::Controllers::Callback
             response = assistant.message(
               assistant_id: ENV['WATSON_ASSISTANT_ID'],
               session_id: watson_session.result['session_id'],
-              input: { text: event.message['text'] }
+              input: { text: line.user_message }
             )
             watson_result = response.result
 
