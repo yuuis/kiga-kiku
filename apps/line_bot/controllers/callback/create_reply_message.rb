@@ -97,7 +97,7 @@ class CreateReplyMessage < LineManager
   end
 
   # ユーザーIDを取得できなかった時
-  def connot_get_user_id
+  def cannot_get_user_id
     reset_reply_message
     @reply_message << {
       type: 'text',

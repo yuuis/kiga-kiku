@@ -44,7 +44,7 @@ module LineBot::Controllers::Callback
           end
 
         when Line::Bot::Event::Message
-          return line.connot_get_user_id if line.user_id.nil? # LINEID -> UserIDに変換できなかった時の例外処理
+          return line.cannot_get_user_id if line.user_id.nil? # LINEID -> UserIDに変換できなかった時の例外処理
 
           line.user_send_message(event)
 
