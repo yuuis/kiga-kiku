@@ -37,4 +37,9 @@ class LineManager
     user = UserRepository.new.create(name: @display_name)
     UserLineUserRelRepository.new.create(user_id: user.id, line_user_id: @line_id)
   end
+
+  
+  def symbolize_keys(hash)
+    hash.map{|k,v| [k.to_sym, v] }.to_h
+  end
 end
