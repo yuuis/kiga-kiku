@@ -51,6 +51,7 @@ class CreateReplyMessage < LineManager
     # Transaction and Conversation
     recommend_transaction_repository = RecommendTransactionRepository.new
     recommend_conversation_repository = RecommendConversationRepository.new
+    
     transaction = recommend_transaction_repository.find_by_user_id(user_id)
     conversation = recommend_conversation_repository.find_by_transaction(transaction) unless transaction.nil?
 
