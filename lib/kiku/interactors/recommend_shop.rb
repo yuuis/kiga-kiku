@@ -29,14 +29,13 @@ class RecommendShop
       conditions = add_condition_midnight(conditions)
       conditions = add_condition_budget(conditions, user)
       conditions = add_condition_range(conditions, latitude, longitude)
-      # conditions = add_condition_user_feedback(conditions, user) # エラー出るのでとりあえずコメントアウト
     else
       conditions = past_conditions
     end
 
     shops = get_shops(conditions)
 
-    shops = recommend(user, search_word, latitude, longitude, ConditionRepository.new.farther(conditions)) if shops.empty? && conditions[:range] < 5
+    # shops = recommend(user, search_word, latitude, longitude, ConditionRepository.new.farther(conditions)) if shops.empty? && conditions.nil? || conditions[:range] < 5
 
     { shops: shops, conditions: conditions }
   end
@@ -81,13 +80,6 @@ class RecommendShop
     end
 
     conditions
-  end
-
-  def add_condition_user_feedback(conditions, user)
-    like_feedbacks = FeedbackRepository.new.like_feedbacks(user)
-    like_conditions = ConditionRepository.new.feedback_conditions(like_feedbacks)
-
-    conditions.merge(like_conditions.map { |lc| JSON.parse(lc.first.conditions) }.flatten.first)
   end
 
   def get_shops(conditions)
