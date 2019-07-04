@@ -50,7 +50,7 @@ module LineBot::Controllers::Callback
 
           case event.type
           when Line::Bot::Event::MessageType::Location
-            # WIP:最新位置情報を更新
+            # TODO:最新位置情報を更新
             message = {
               type: 'text',
               text: event.message['address']
