@@ -63,12 +63,8 @@ class CreateReplyMessage < LineManager
       words = ['ラーメン'] # WIP:前回のワードを取得
 
       user_request = 'もっと安い' # WIP:ユーザが送ってきた要望「もっと**」
-      before_conditions = JSON.parse(conversation.conditions)
 
-      before_conditions = self.symbolize_keys(before_conditions)
-
-      past_conditions = ConditionRepository.new.condition_checks(user_request, before_conditions) # WIP: conditionを取得して格納
-
+      past_conditions = ConditionRepository.new.condition_checks(user_request, JSON.parse(conversation.conditions, symbolize_names: true))
     elsif watson_entities.include?('メニュー')
       words = get_origin_entities(@user_message, @watson_result, 'メニュー') # watsonのメニューに引っかかった
     elsif watson_entities.include?('起動ワード')
@@ -88,7 +84,7 @@ class CreateReplyMessage < LineManager
 
     # 返り値の形式がおかしいので対策
     shops = shops[:shops] if shops.kind_of?(Hash) && !shops[:shops].blank?
-    return cannot_found_recommend_shop if shops.kind_of?(Hash) && shops[:shops].length < 1 || shops.length < 1
+    return cannot_found_recommend_shop if shops.kind_of?(Hash) && shops[:shops].length < 1 || shops.kind_of?(Array) && shops.length < 1
 
     recommend_conversation_repository.create(recommend_transaction_id: transaction[:id], conditions: conditions.to_json, user_word: @user_message, bot_word: reply_message_text)
 
