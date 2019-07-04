@@ -47,23 +47,23 @@ class CreateReplyMessage < LineManager
   def recommend_shop
     return if @watson_result.blank?
 
-    watson_text_reply
-    watson_entities = pull_entities(get_entities(@watson_result))
-
     # Transaction and Conversation
     recommend_transaction_repository = RecommendTransactionRepository.new
     recommend_conversation_repository = RecommendConversationRepository.new
-
+    
     transaction = recommend_transaction_repository.find_by_user_id(user_id)
     conversation = recommend_conversation_repository.find_by_transaction(transaction) unless transaction.nil?
-
+    
     transaction = recommend_transaction_repository.create(user_id: user_id) if transaction.nil?
 
-    if watson_entities.include?('精度向上キーワード')
-      words = ['ラーメン'] # TODO:前回のワードを取得
+    watson_text_reply
+    watson_entities = pull_entities(get_entities(@watson_result))
+    if watson_entities.include?('精度向上キーワード') 
+      user_request = get_origin_entities(user_message, @watson_result)
+      prev_conditions = JSON.parse(conversation.conditions, symbolize_names: true)
+      words = [prev_conditions[:keyword]]
 
-      user_request = 'もっと安い' # TODO:ユーザが送ってきた要望「もっと**」
-      past_conditions = ConditionRepository.new.condition_checks(user_request, JSON.parse(conversation.conditions, symbolize_names: true))
+      past_conditions = ConditionRepository.new.condition_checks(user_request, prev_conditions)
     elsif watson_entities.include?('メニュー')
       words = get_origin_entities(@user_message, @watson_result, 'メニュー') # watsonのメニューに引っかかった
     elsif watson_entities.include?('起動ワード')
