@@ -35,7 +35,7 @@ class RecommendShop
 
     shops = get_shops(conditions)
 
-    # shops = recommend(user, search_word, latitude, longitude, ConditionRepository.new.farther(conditions)) if shops.empty? && conditions.nil? || conditions[:range] < 5
+    return recommend(user, search_word, latitude, longitude, ConditionRepository.new.farther(conditions)) if shops.empty? && conditions.key?(:range) && conditions[:range] < 5
 
     { shops: shops, conditions: conditions }
   end
