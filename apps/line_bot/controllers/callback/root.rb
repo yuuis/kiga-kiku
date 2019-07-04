@@ -3,8 +3,6 @@ module LineBot::Controllers::Callback
     require 'line/bot'
     require 'ibm_watson/assistant_v2'
 
-    require_relative 'reply_test'
-    require_relative 'reply_message'
     require_relative 'watson_parse'
 
     include LineBot::Action
@@ -17,98 +15,88 @@ module LineBot::Controllers::Callback
       end
     end
 
-    def call(_params)
-      body = request.body.read
-      message = []
-
-      # 先にWatsonの接続
-      assistant = IBMWatson::AssistantV2.new(
+    def assistant
+      @assistant = IBMWatson::AssistantV2.new(
         version: '2018-09-17',
         username: ENV['WATSON_USERNAME'],
         password: ENV['WATSON_PASSWORD']
       )
+    end
+
+    def call(_params)
+      body = request.body.read
+      line = CreateReplyMessage.new(body)
 
       # LINEからのヘッダー解析
       signature = request.env['HTTP_X_LINE_SIGNATURE']
-      status 400, 'Bad request' unless client.validate_signature(body, signature)
+      status 400, 'Bad request' unless line.signature?(signature)
 
-      # LINEからのイベントを取得
-      events = client.parse_events_from(body)
-
-      events.each do |event|
-        user_id = get_user_id(event)
-
+      line.events.each do |event|
         case event
+
         when Line::Bot::Event::Follow
           line_user_id = event['source']['userId']
-          if user_id.blank?
-            user = UserRepository.new.create(name: 'name_1')
-            UserLineUserRelRepository.new.create(user_id: user.id, line_user_id: line_user_id)
+          unless line.registered?
+            line.user_register
 
-            message = get_add_friend
-            client.reply_message(event['replyToken'], message)
+            line.register_thanks_reply
+            line.send_message(event)
           end
-          break
+
         when Line::Bot::Event::Message
+          return line.cannot_get_user_id if line.user_id.nil? # LINEID -> UserIDに変換できなかった時の例外処理
+
+          line.user_send_message(event)
+
           case event.type
           when Line::Bot::Event::MessageType::Location
+            # WIP:最新位置情報を更新
             message = {
               type: 'text',
               text: event.message['address']
             }
             client.reply_message(event['replyToken'], message)
             break
-          when Line::Bot::Event::MessageType::Text # テキストが送られてきた場合
 
+          when Line::Bot::Event::MessageType::Text
             # 文章解析を行う
             # 1. セッションを生成
             watson_session = assistant.create_session(
               assistant_id: ENV['WATSON_ASSISTANT_ID']
             )
-            session_id = watson_session.result['session_id']
-
             # 2. セッション情報を入力してレスポンスを受け取る
             response = assistant.message(
               assistant_id: ENV['WATSON_ASSISTANT_ID'],
-              session_id: session_id,
+              session_id: watson_session.result['session_id'],
               input: { text: event.message['text'] }
             )
             watson_result = response.result
 
-            Hanami.logger.debug watson_result.to_json
-
-            message = []
+            line.register_watson_result(watson_result)
+            # Hanami.logger.debug watson_result.to_json
 
             watson_entities = pull_entities(get_entities(watson_result))
 
             if watson_entities.nil?
-              message = get_message(event, watson_result)
+              line.watson_text_reply
             else
+              line.recommend_shop
 
-              # watsonによる返信文を生成して格納
-              message << get_message(event, watson_result)
-
-              if watson_entities.include?('メニュー')
-                message << get_recommend(event, watson_result)
-              elsif watson_entities.include?('起動ワード')
-                message << get_first_recommend(event) # .merge(get_quick_reply(['もっと安い', '近くのお店']))
-              end
-
-              # UIデバッグ用の、サンプルキーテキスト受信用 ========================
-              reply_debug = false
-              if reply_debug
-                message << check_lexical(event.message['text'])
-                if message
-                  client.reply_message(event['replyToken'], message)
-                  return true
-                end
-              end
-              # ============================================================
+              # # UIデバッグ用の、サンプルキーテキスト受信用 ========================
+              # reply_debug = false
+              # if reply_debug
+              #   message << check_lexical(event.message['text'])
+              #   if message
+              #     client.reply_message(event['replyToken'], message)
+              #     return true
+              #   end
+              # end
+              # # ============================================================
 
             end
 
             # 最後に送信
-            client.reply_message(event['replyToken'], message)
+            line.send_message(event)
           end
         end
       end

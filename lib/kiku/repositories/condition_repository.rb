@@ -21,26 +21,35 @@ class ConditionRepository < Hanami::Repository
     }
   end
 
+  def condition_checks(word, conditions)
+    case word
+    when more_conditions[:cheaper] then cheaper(conditions)
+    when more_conditions[:more_expensive] then more_expensive(conditions)
+    when more_conditions[:closer] then closer(conditions)
+    when more_conditions[:farther] then farther(conditions)
+    end
+  end
+
   def cheaper(conditions)
-    past_budget_code = conditions[:budget]
+    past_budget_code = conditions[:budget].nil? ? 'B008' : conditions[:budget]
     conditions[:budget] = budgets[budgets.index(past_budget_code) - 1] unless past_budget_code == 'B009'
     conditions
   end
 
   def more_expensive(conditions)
-    past_budget_code = conditions[:budget]
+    past_budget_code = conditions[:budget].nil? ? 'B008' : conditions[:budget]
     conditions[:budget] = budgets[budgets.index(past_budget_code) + 1] unless past_budget_code == 'B014'
     conditions
   end
 
   def closer(conditions)
-    past_range = conditions[:range]
+    past_range = conditions[:range].nil? ? 0 : conditions[:range]
     conditions[:range] = past_range - 1 unless past_range == 1
     conditions
   end
 
   def farther(conditions)
-    past_range = conditions[:range]
+    past_range = conditions[:range].nil? ? 0 : conditions[:range]
     conditions[:range] = past_range + 1 unless past_range == 5
     conditions
   end
