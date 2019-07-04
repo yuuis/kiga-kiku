@@ -61,7 +61,7 @@ class CreateReplyMessage < LineManager
       words = ['ラーメン'] # WIP:前回のワードを取得
 
       user_request = 'もっと安い' # WIP:ユーザが送ってきた要望「もっと**」
-      past_conditions = ConditionRepository.new.condition_checks(user_request, JSON.parse(conversation.conditions, {:symbolize_names => true})) # WIP: conditionを取得して格納
+      past_conditions = ConditionRepository.new.condition_checks(user_request, JSON.parse(conversation.conditions, symbolize_names: true)) # WIP: conditionを取得して格納
 
     elsif watson_entities.include?('メニュー')
       words = get_origin_entities(@user_message, @watson_result, 'メニュー') # watsonのメニューに引っかかった
