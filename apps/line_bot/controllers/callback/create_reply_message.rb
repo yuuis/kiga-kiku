@@ -3,6 +3,8 @@ require_relative 'line_manager'
 require 'line/bot'
 
 class CreateReplyMessage < LineManager
+  attr_reader :user_message
+
   def initialize(body)
     super
     @reply_message = []
@@ -62,7 +64,6 @@ class CreateReplyMessage < LineManager
 
       user_request = 'もっと安い' # TODO:ユーザが送ってきた要望「もっと**」
       past_conditions = ConditionRepository.new.condition_checks(user_request, JSON.parse(conversation.conditions, symbolize_names: true))
-
     elsif watson_entities.include?('メニュー')
       words = get_origin_entities(@user_message, @watson_result, 'メニュー') # watsonのメニューに引っかかった
     elsif watson_entities.include?('起動ワード')
@@ -77,14 +78,12 @@ class CreateReplyMessage < LineManager
     end
 
     recommend = RecommendShop.new.call(self.user_id, words, latitude, longitude, past_conditions)
-    return cannot_found_recommend_shop if recommend.recommend_result.nil?
-
     shops = recommend.recommend_result[:shops]
     conditions = recommend.recommend_result[:conditions]
 
-    # TODO: [create recommend conversation]
-    recommend_conversation_repository.create(recommend_transaction_id: transaction[:id], conditions: conditions.to_json, user_word: @user_message, bot_word: reply_message_text)
+    return cannot_found_recommend_shop if shops.length < 1
 
+    recommend_conversation_repository.create(recommend_transaction_id: transaction[:id], conditions: conditions.to_json, user_word: @user_message, bot_word: reply_message_text)
     @reply_message << render_shops_template(shops).merge(get_more_condition)
   end
 
@@ -219,4 +218,6 @@ class CreateReplyMessage < LineManager
       }
     ]
   end
+
+
 end
