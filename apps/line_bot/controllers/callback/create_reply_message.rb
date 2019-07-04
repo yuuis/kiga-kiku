@@ -193,17 +193,17 @@ class CreateReplyMessage < LineManager
         type: 'message'
       },
       {
-        label: 'もっと近く',
+        label: 'もっと近い',
         imageUrl: 'https://2.bp.blogspot.com/-6eX4a0aKzH0/UVTVHAV0-DI/AAAAAAAAPCc/JP2uDFtSvqk/s400/saifu_gamaguchi.png',
         type: 'message'
       },
       {
-        label: 'もっと遠く',
+        label: 'もっと遠い',
         imageUrl: 'https://2.bp.blogspot.com/-oDwavrWTeeo/WAhy4ctz82I/AAAAAAAA_IY/TYSatkgb5jcXa9vf1LeH2Ehdd5tI-2nQwCLcB/s400/tabako_suigara.png',
         type: 'message'
       },
       {
-        label: '喫煙可',
+        label: '喫煙できる',
         imageUrl: 'https://2.bp.blogspot.com/-oDwavrWTeeo/WAhy4ctz82I/AAAAAAAA_IY/TYSatkgb5jcXa9vf1LeH2Ehdd5tI-2nQwCLcB/s400/tabako_suigara.png',
         type: 'message'
       },
@@ -213,7 +213,7 @@ class CreateReplyMessage < LineManager
         type: 'message'
       },
       {
-        label: '近くのお店',
+        label: '現在地を教える',
         type: 'location'
       }
     ]

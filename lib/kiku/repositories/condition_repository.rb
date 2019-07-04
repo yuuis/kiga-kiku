@@ -17,7 +17,8 @@ class ConditionRepository < Hanami::Repository
       cheaper: 'もっと安い',
       more_expensive: 'もっと高い',
       closer: 'もっと近い',
-      farther: 'もっと遠い'
+      farther: 'もっと遠い',
+      now_location: '現在地を教える'
     }
   end
 
