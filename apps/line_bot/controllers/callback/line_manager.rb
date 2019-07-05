@@ -37,5 +37,4 @@ class LineManager
     user = UserRepository.new.create(name: @display_name)
     UserLineUserRelRepository.new.create(user_id: user.id, line_user_id: @line_id)
   end
-
 end

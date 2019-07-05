@@ -50,23 +50,25 @@ class CreateReplyMessage < LineManager
     # Transaction and Conversation
     recommend_transaction_repository = RecommendTransactionRepository.new
     recommend_conversation_repository = RecommendConversationRepository.new
-    
+
     transaction = recommend_transaction_repository.find_by_user_id(user_id)
     conversation = recommend_conversation_repository.find_by_transaction(transaction) unless transaction.nil?
-    
+
     transaction = recommend_transaction_repository.create(user_id: user_id) if transaction.nil?
 
     watson_text_reply
     watson_entities = pull_entities(get_entities(@watson_result))
-    if watson_entities.include?('精度向上キーワード') 
+
+    if watson_entities.include?('精度向上キーワード') && !conversation.nil?
       user_request = get_origin_entities(user_message, @watson_result)
       prev_conditions = JSON.parse(conversation.conditions, symbolize_names: true)
       words = [prev_conditions[:keyword]]
 
-      past_conditions = ConditionRepository.new.condition_checks(user_request, prev_conditions)
+      past_conditions = ConditionRepository.new.check_conditions(user_request, prev_conditions)
     elsif watson_entities.include?('メニュー')
-      words = get_origin_entities(@user_message, @watson_result, 'メニュー') # watsonのメニューに引っかかった
-    elsif watson_entities.include?('起動ワード')
+      words = get_origin_entities(@user_message, @watson_result, 'メニュー') # watsonのメニューに引っかかったワード
+
+    elsif watson_entities.include?('起動ワード') || watson_entities.include?('精度向上キーワード')
       # TODO: 時間によって変更
       words = ['ラーメン']
     end
@@ -77,11 +79,11 @@ class CreateReplyMessage < LineManager
       longitude = location.longitude
     end
 
-    recommend = RecommendShop.new.call(self.user_id, words, latitude, longitude, past_conditions)
+    recommend = RecommendShop.new.call(user_id, words, latitude, longitude, past_conditions)
     shops = recommend.recommend_result[:shops]
     conditions = recommend.recommend_result[:conditions]
 
-    return cannot_found_recommend_shop if shops.length < 1
+    return cannot_found_recommend_shop if shops.empty?
 
     recommend_conversation_repository.create(recommend_transaction_id: transaction[:id], conditions: conditions.to_json, user_word: @user_message, bot_word: reply_message_text)
     @reply_message << render_shops_template(shops).merge(get_more_condition)
@@ -218,6 +220,4 @@ class CreateReplyMessage < LineManager
       }
     ]
   end
-
-
 end
