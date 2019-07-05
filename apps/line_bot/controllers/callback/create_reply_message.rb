@@ -61,14 +61,14 @@ class CreateReplyMessage < LineManager
 
     if watson_entities.include?('精度向上キーワード') && !conversation.nil?
       user_request = get_origin_entities(user_message, @watson_result)
-      prev_conditions = JSON.parse(conversation.conditions, symbolize_names: true)
-      words = [prev_conditions[:keyword]]
+      pre_conditions = JSON.parse(conversation.conditions, symbolize_names: true)
+      words = [pre_conditions[:keyword]]
 
-      past_conditions = ConditionRepository.new.check_conditions(user_request, prev_conditions)
+      past_conditions = ConditionRepository.new.check_conditions(user_request, pre_conditions)
     elsif watson_entities.include?('メニュー')
       words = get_origin_entities(@user_message, @watson_result, 'メニュー') # watsonのメニューに引っかかったワード
 
-    elsif watson_entities.include?('起動ワード') || watson_entities.include?('精度向上キーワード')
+    elsif watson_entities.include?('起動ワード') || watson_entities.include?('精度向上キーワード') # TODO: conversationが存在しない状況で精度向上キーワードを言われた時の例外処理
       # TODO: 時間によって変更
       words = ['ラーメン']
     end
