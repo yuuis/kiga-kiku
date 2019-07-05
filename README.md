@@ -16,6 +16,11 @@ prototype of *kiga-kiku flamework* ver.1
   $ docker run -v kiku_mysql_data:/srv -it ubuntu bash
 ```
 
+## lint
+```sh
+  docker-compose run kiku bundle exec rubocop -a
+```
+
 ## api
   * GET `/shops`
     * query params
