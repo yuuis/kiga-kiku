@@ -22,7 +22,7 @@ class ConditionRepository < Hanami::Repository
     }
   end
 
-  def condition_checks(word, conditions)
+  def check_conditions(word, conditions)
     case word
     when more_conditions[:cheaper] then cheaper(conditions)
     when more_conditions[:more_expensive] then more_expensive(conditions)

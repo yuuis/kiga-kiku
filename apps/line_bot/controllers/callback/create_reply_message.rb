@@ -47,9 +47,6 @@ class CreateReplyMessage < LineManager
   def recommend_shop
     return if @watson_result.blank?
 
-    watson_text_reply
-    watson_entities = pull_entities(get_entities(@watson_result))
-
     # Transaction and Conversation
     recommend_transaction_repository = RecommendTransactionRepository.new
     recommend_conversation_repository = RecommendConversationRepository.new
@@ -59,14 +56,19 @@ class CreateReplyMessage < LineManager
 
     transaction = recommend_transaction_repository.create(user_id: user_id) if transaction.nil?
 
-    if watson_entities.include?('精度向上キーワード')
-      words = ['ラーメン'] # TODO: 前回のワードを取得
+    watson_text_reply
+    watson_entities = pull_entities(get_entities(@watson_result))
 
-      user_request = 'もっと安い' # TODO: ユーザが送ってきた要望「もっと**」
-      past_conditions = ConditionRepository.new.condition_checks(user_request, JSON.parse(conversation.conditions, symbolize_names: true))
+    if watson_entities.include?('精度向上キーワード') && !conversation.nil?
+      user_request = get_origin_entities(user_message, @watson_result)
+      pre_conditions = JSON.parse(conversation.conditions, symbolize_names: true)
+      words = [pre_conditions[:keyword]]
+
+      past_conditions = ConditionRepository.new.check_conditions(user_request, pre_conditions)
     elsif watson_entities.include?('メニュー')
-      words = get_origin_entities(@user_message, @watson_result, 'メニュー') # watsonのメニューに引っかかった
-    elsif watson_entities.include?('起動ワード')
+      words = get_origin_entities(@user_message, @watson_result, 'メニュー') # watsonのメニューに引っかかったワード
+
+    elsif watson_entities.include?('起動ワード') || watson_entities.include?('精度向上キーワード') # TODO: conversationが存在しない状況で精度向上キーワードを言われた時の例外処理
       # TODO: 時間によって変更
       words = ['ラーメン']
     end
@@ -81,7 +83,7 @@ class CreateReplyMessage < LineManager
     shops = recommend.recommend_result[:shops]
     conditions = recommend.recommend_result[:conditions]
 
-    return cannot_found_recommend_shop if shops.length.empty?
+    return cannot_found_recommend_shop if shops.empty?
 
     recommend_conversation_repository.create(recommend_transaction_id: transaction[:id], conditions: conditions.to_json, user_word: @user_message, bot_word: reply_message_text)
     @reply_message << render_shops_template(shops).merge(get_more_condition)
