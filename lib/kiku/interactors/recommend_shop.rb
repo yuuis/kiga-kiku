@@ -9,7 +9,7 @@ class RecommendShop
   expose :recommend_result
 
   # TODO: とりあえず緯度/経度は八王子にする
-  def call(user_id, words, latitude = '35.65562', longitude = '139.3366642', past_conditions = nil)
+  def call(user_id, words = [], latitude = '35.65562', longitude = '139.3366642', past_conditions = nil)
     user = UserRepository.new.find(user_id)
 
     return nil if user.nil?
