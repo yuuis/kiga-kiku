@@ -13,4 +13,8 @@ class RecommendTransactionRepository < Hanami::Repository
 
     recommend_transaction
   end
+
+  def find_all_by_user_id(user_id)
+    recommend_transactions.where(user_id: user_id).map_to(RecommendTransaction).to_a
+  end
 end

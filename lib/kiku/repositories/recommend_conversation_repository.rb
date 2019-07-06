@@ -8,4 +8,8 @@ class RecommendConversationRepository < Hanami::Repository
   def find_by_transaction(transaction)
     recommend_conversations.where(recommend_transaction_id: transaction[:id]).map_to(RecommendConversation).to_a.last
   end
+
+  def find_all_by_transaction(transaction)
+    recommend_conversations.where(recommend_transaction_id: transaction.id).map_to(RecommendConversation).to_a
+  end
 end
