@@ -13,7 +13,7 @@ class RecommendShop
     user = UserRepository.new.find(user_id)
     return nil if user.nil?
 
-    words = get_timely_keywords unless words.empty? && past_conditions.nil?
+    words = keyword_by_hour(Time.now.hour) unless words.empty? && past_conditions.nil?
 
     @recommend_result = recommend(user, words, latitude, longitude, past_conditions)
   end
@@ -85,15 +85,14 @@ class RecommendShop
 
   # 時間帯によってキーワードを返す
   # TODO: 履歴やユーザの好みによってキーワードを最適化
-  def get_timely_keywords
-    words = []
-    case Time.now.hour
-    when 22..24, 0..3 then words << ["お酒", "居酒屋"].sample
-    when 4..10 then words << ["モーニング", "コーヒー", "ブレックファースト", "朝食", "朝ごはん"].sample
-    when 11..13 then words << ["ラーメン", "ランチ", "カレー", "パスタ", "お昼ご飯"].sample
-    when 14..17 then words << ["ケーキ", "お菓子", "おやつ", "和菓子", "紅茶", "喫茶店"].sample
-    when 18..21 then words << ["ディナー", "夜ご飯", "夕食", "レストラン"].sample
-    else words << ["焼肉"].sample
+  def keyword_by_hour(hour)
+    case hour
+    when 22..24, 0..3 then ["お酒", "居酒屋"].sample(1)
+    when 4..10 then ["モーニング", "コーヒー", "ブレックファースト", "朝食", "朝ごはん"].sample(1)
+    when 11..13 then ["ラーメン", "ランチ", "カレー", "パスタ", "お昼ご飯"].sample(1)
+    when 14..17 then ["ケーキ", "お菓子", "おやつ", "和菓子", "紅茶", "喫茶店"].sample(1)
+    when 18..21 then ["ディナー", "夜ご飯", "夕食", "レストラン"].sample(1)
+    else ["焼肉"].sample(1)
     end
   end
 

@@ -36,10 +36,10 @@ class CreateReplyMessage < LineManager
   # Watsonのテキストリプライを設定
   def watson_text_reply
     unless @watson_result.blank?
-      @reply_message << {
+      @reply_message.push({
         type: 'text',
         text: get_reply_text(@watson_result)
-      }
+      })
     end
   end
 
@@ -75,24 +75,24 @@ class CreateReplyMessage < LineManager
     return cannot_found_recommend_shop if shops.empty?
 
     RecommendConversationRepository.new.create(recommend_transaction_id: transaction[:id], conditions: conditions.to_json, user_word: @user_message, bot_word: reply_message_text)
-    @reply_message << render_shops_template(shops).merge(get_more_condition)
+    @reply_message.push(render_shops_template(shops).merge(get_more_condition))
   end
 
   # 友達追加時に実行
   def register_thanks_reply
-    @reply_message << {
+    @reply_message.push({
       type: 'text',
       text: '友達登録ありがとうにゃ！'
-    }
+    })
   end
 
   # ユーザーIDを取得できなかった時
   def cannot_get_user_id
     reset_reply_message
-    @reply_message << {
+    @reply_message.push({
       type: 'text',
       text: 'ユーザー情報を取得できなかったにゃ……。一度ブロックして、もう一回追加して欲しいにゃ。'
-    }
+    })
     send_message(@events.first)
   end
 
@@ -108,7 +108,7 @@ class CreateReplyMessage < LineManager
   def create_quick_reply(item_list)
     items = []
     item_list.each do |item|
-      items << {
+      items.push({
         type: 'action',
         imageUrl: item[:imageUrl],
         action: {
@@ -116,7 +116,7 @@ class CreateReplyMessage < LineManager
           label: item[:label],
           text: item[:text].blank? ? item[:label] : item[:text]
         }
-      }
+      })
     end
     {
       quickReply: {
@@ -127,10 +127,10 @@ class CreateReplyMessage < LineManager
 
   def cannot_found_recommend_shop
     reset_reply_message
-    @reply_message << {
+    @reply_message.push({
       type: 'text',
       text: '近くにお店が見当たらなかったにゃ……'
-    }
+    })
   end
 
   private
@@ -168,7 +168,7 @@ class CreateReplyMessage < LineManager
       cannot_found_recommend_shop
     else
       shops.each do |shop|
-        columns << {
+        columns.push({
           thumbnailImageUrl: shop['photo']['pc']['l'],
           title: shop['name'],
           text: shop['catch'],
@@ -184,7 +184,7 @@ class CreateReplyMessage < LineManager
               uri: shop['urls']['pc']
             }
           ]
-        }
+        })
       end
     end
 
