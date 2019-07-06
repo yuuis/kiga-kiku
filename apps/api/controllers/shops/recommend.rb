@@ -22,7 +22,7 @@ module Api::Controllers::Shops
         longitude = location.longitude
       end
 
-      @shops = RecommendShop.new.call(user_id = params.get(:user_id), words = params.get(:words).split(','), latitude = latitude, longitude = longitude).recommend_result
+      @shops = RecommendShop.new.call(params.get(:user_id), params.get(:words).split(','), latitude, longitude).recommend_result
     end
 
     private
