@@ -11,8 +11,9 @@ class RecommendShop
   # TODO: とりあえず緯度/経度は八王子にする
   def call(user_id, words = [], latitude = '35.65562', longitude = '139.3366642', past_conditions = nil)
     user = UserRepository.new.find(user_id)
-
     return nil if user.nil?
+
+    words = keyword_by_hour(Time.now.hour) unless words.empty? && past_conditions.nil?
 
     @recommend_result = recommend(user, words, latitude, longitude, past_conditions)
   end
@@ -80,6 +81,19 @@ class RecommendShop
     end
 
     conditions
+  end
+
+  # 時間帯によってキーワードを返す
+  # TODO: 履歴やユーザの好みによってキーワードを最適化
+  def keyword_by_hour(hour)
+    case hour
+    when 22..24, 0..3 then ["お酒", "居酒屋"].sample(1)
+    when 4..10 then ["モーニング", "コーヒー", "ブレックファースト", "朝食", "朝ごはん"].sample(1)
+    when 11..13 then ["ラーメン", "ランチ", "カレー", "パスタ", "お昼ご飯"].sample(1)
+    when 14..17 then ["ケーキ", "お菓子", "おやつ", "和菓子", "紅茶", "喫茶店"].sample(1)
+    when 18..21 then ["ディナー", "夜ご飯", "夕食", "レストラン"].sample(1)
+    else ["焼肉"].sample(1)
+    end
   end
 
   def get_shops(conditions)
