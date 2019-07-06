@@ -47,45 +47,39 @@ class CreateReplyMessage < LineManager
   def recommend_shop
     return if @watson_result.blank?
 
-    # Transaction and Conversation
-    recommend_transaction_repository = RecommendTransactionRepository.new
-    recommend_conversation_repository = RecommendConversationRepository.new
-
-    transaction = recommend_transaction_repository.find_by_user_id(user_id)
-    conversation = recommend_conversation_repository.find_by_transaction(transaction) unless transaction.nil?
-
-    transaction = recommend_transaction_repository.create(user_id: user_id) if transaction.nil?
+    transaction = get_transaction(user_id)
+    conversation = RecommendConversationRepository.new.find_by_transaction(transaction) unless transaction.nil?
 
     watson_text_reply
     watson_entities = pull_entities(get_entities(@watson_result))
 
+    # 「もっと~」
     if watson_entities.include?('精度向上キーワード') && !conversation.nil?
-      user_request = get_origin_entities(user_message, @watson_result)
+      user_request = get_origin_entities(user_message, @watson_result).first
       pre_conditions = JSON.parse(conversation.conditions, symbolize_names: true)
-      words = [pre_conditions[:keyword]]
+      words = []
+      past_conditions = check_conditions(user_request, pre_conditions)
 
-      past_conditions = ConditionRepository.new.check_conditions(user_request, pre_conditions)
+    # watsonのメニューに引っかかったワード
     elsif watson_entities.include?('メニュー')
-      words = get_origin_entities(@user_message, @watson_result, 'メニュー') # watsonのメニューに引っかかったワード
+      words = get_origin_entities(@user_message, @watson_result, 'メニュー')
 
-    elsif watson_entities.include?('起動ワード') || watson_entities.include?('精度向上キーワード') # TODO: conversationが存在しない状況で精度向上キーワードを言われた時の例外処理
+    # 「おい」 などの起動ワード
+    # TODO: conversationが存在しない状況で精度向上キーワードを言われた時の例外処理も含んでいるので、なんとかする
+    elsif watson_entities.include?('起動ワード') || watson_entities.include?('精度向上キーワード')
       # TODO: 時間によって変更
       words = ['ラーメン']
     end
 
-    location = LocationRepository.new.latest(user_id)
-    unless location.nil?
-      latitude = location.latitude
-      longitude = location.longitude
-    end
+    location = latest_location(user_id)
 
-    recommend = RecommendShop.new.call(user_id, words, latitude, longitude, past_conditions)
+    recommend = RecommendShop.new.call(user_id, words, location[:latitude], location[:longitude], past_conditions)
     shops = recommend.recommend_result[:shops]
     conditions = recommend.recommend_result[:conditions]
 
     return cannot_found_recommend_shop if shops.empty?
 
-    recommend_conversation_repository.create(recommend_transaction_id: transaction[:id], conditions: conditions.to_json, user_word: @user_message, bot_word: reply_message_text)
+    RecommendConversationRepository.new.create(recommend_transaction_id: transaction[:id], conditions: conditions.to_json, user_word: @user_message, bot_word: reply_message_text)
     @reply_message << render_shops_template(shops).merge(get_more_condition)
   end
 
@@ -145,6 +139,33 @@ class CreateReplyMessage < LineManager
   end
 
   private
+
+  def get_transaction(user_id)
+    transaction_repository = RecommendTransactionRepository.new
+
+    transaction = transaction_repository.find_by_user_id(user_id)
+    return transaction_repository.create(user_id: user_id) if transaction.nil?
+
+    transaction
+  end
+
+  def latest_location(user_id)
+    location = LocationRepository.new.latest(user_id)
+    latitude, longitude = location.latitude, location.longitude unless location.nil?
+
+    { latitude: latitude, longitude: longitude }
+  end
+
+  def check_conditions(word, conditions)
+    condition_repository = ConditionRepository.new
+    more_conditions = condition_repository.more_conditions
+    case word
+    when more_conditions[:cheaper] then condition_repository.cheaper(conditions)
+    when more_conditions[:more_expensive] then condition_repository.more_expensive(conditions)
+    when more_conditions[:closer] then condition_repository.closer(conditions)
+    when more_conditions[:farther] then condition_repository.farther(conditions)
+    end
+  end
 
   def render_shops_template(shops)
     columns = []
