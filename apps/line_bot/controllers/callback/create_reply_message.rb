@@ -53,22 +53,17 @@ class CreateReplyMessage < LineManager
     watson_text_reply
     watson_entities = pull_entities(get_entities(@watson_result))
 
+    words = []
+
     # 「もっと~」
     if watson_entities.include?('精度向上キーワード') && !conversation.nil?
       user_request = get_origin_entities(user_message, @watson_result).first
       pre_conditions = JSON.parse(conversation.conditions, symbolize_names: true)
-      words = []
       past_conditions = check_conditions(user_request, pre_conditions)
 
     # watsonのメニューに引っかかったワード
     elsif watson_entities.include?('メニュー')
       words = get_origin_entities(@user_message, @watson_result, 'メニュー')
-
-    # 「おい」 などの起動ワード
-    # TODO: conversationが存在しない状況で精度向上キーワードを言われた時の例外処理も含んでいるので、なんとかする
-    elsif watson_entities.include?('起動ワード') || watson_entities.include?('精度向上キーワード')
-      # TODO: 時間によって変更
-      words = ['ラーメン']
     end
 
     location = latest_location(user_id)
