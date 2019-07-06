@@ -73,7 +73,6 @@ class CreateReplyMessage < LineManager
 
     location = latest_location(user_id)
 
-    binding.pry
     recommend = RecommendShop.new.call(user_id, words, location[:latitude], location[:longitude], past_conditions)
     shops = recommend.recommend_result[:shops]
     conditions = recommend.recommend_result[:conditions]
