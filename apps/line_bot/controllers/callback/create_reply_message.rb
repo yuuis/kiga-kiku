@@ -58,7 +58,7 @@ class CreateReplyMessage < LineManager
       user_request = get_origin_entities(user_message, @watson_result).first
       pre_conditions = JSON.parse(conversation.conditions, symbolize_names: true)
       words = []
-      past_conditions = ConditionRepository.new.check_conditions(user_request, pre_conditions)
+      past_conditions = check_conditions(user_request, pre_conditions)
 
     # watsonのメニューに引っかかったワード
     elsif watson_entities.include?('メニュー')
@@ -154,6 +154,17 @@ class CreateReplyMessage < LineManager
     latitude, longitude = location.latitude, location.longitude unless location.nil?
 
     { latitude: latitude, longitude: longitude }
+  end
+
+  def check_conditions(word, conditions)
+    condition_repository = ConditionRepository.new
+    more_conditions = condition_repository.more_conditions
+    case word
+    when more_conditions[:cheaper] then condition_repository.cheaper(conditions)
+    when more_conditions[:more_expensive] then condition_repository.more_expensive(conditions)
+    when more_conditions[:closer] then condition_repository.closer(conditions)
+    when more_conditions[:farther] then condition_repository.farther(conditions)
+    end
   end
 
   def render_shops_template(shops)
