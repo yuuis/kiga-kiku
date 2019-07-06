@@ -144,7 +144,7 @@ class CreateReplyMessage < LineManager
     transaction_repository = RecommendTransactionRepository.new
 
     transaction = transaction_repository.find_by_user_id(user_id)
-    return transaction_repository.create(user_id: user_id) if transaction.nil?
+    return transaction_repository.create(user_id: user_id).to_h if transaction.nil?
 
     transaction
   end
