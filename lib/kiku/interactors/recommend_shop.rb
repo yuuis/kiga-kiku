@@ -108,7 +108,7 @@ class RecommendShop
 
     return keyword_by_hour(hour) if conversations.nil?
 
-    filtered_conversations = conversations.select { |conversation| time_range[conversation.created_at.hour] == time_range[hour] }
+    filtered_conversations = conversations.select { |conversation| time_range[conversation.created_at.hour + 9] == time_range[hour] }
 
     user_words = filtered_conversations.map{ |conversation| conversation.user_word }
     ConditionRepository.new.more_conditions.merge(start: 'おい').each { |_, value| user_words.delete(value) }
