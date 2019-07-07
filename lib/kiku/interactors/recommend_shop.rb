@@ -88,12 +88,12 @@ class RecommendShop
   # 時間帯によってキーワードを返す
   # TODO: 履歴やユーザの好みによってキーワードを最適化
   def keyword_by_hour(hour)
-    case hour
-    when 22..24, 0..3 then %w[お酒 居酒屋].sample(1)
-    when 4..10 then %w[モーニング コーヒー ブレックファースト 朝食 朝ごはん].sample(1)
-    when 11..13 then %w[ラーメン ランチ カレー パスタ お昼ご飯].sample(1)
-    when 14..17 then %w[ケーキ お菓子 おやつ 和菓子 紅茶 喫茶店].sample(1)
-    when 18..21 then %w[ディナー 夜ご飯 夕食 レストラン].sample(1)
+    case time_range[hour]
+    when :midnight then %w[お酒 居酒屋].sample(1)
+    when :morning then %w[モーニング コーヒー ブレックファースト 朝食 朝ごはん].sample(1)
+    when :noon then %w[ラーメン ランチ カレー パスタ お昼ご飯].sample(1)
+    when :after_noon then %w[ケーキ お菓子 おやつ 和菓子 紅茶 喫茶店].sample(1)
+    when :night then %w[ディナー 夜ご飯 夕食 レストラン].sample(1)
     else ['焼肉'].sample(1)
     end
   end
