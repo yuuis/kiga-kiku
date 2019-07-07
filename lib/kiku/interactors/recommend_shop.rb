@@ -108,43 +108,22 @@ class RecommendShop
 
     return keyword_by_hour(hour) if conversations.nil?
 
-    filtered_conversations = conversations.select { |conversation| time_range[conversation.created_at.hour + 9] == time_range[hour] }
-
-    user_words = filtered_conversations.map{ |conversation| conversation.user_word }
+    user_words = conversations.select { |conversation| time_range[conversation.created_at.hour + 9] == time_range[hour] }.map(&:user_word)
     ConditionRepository.new.more_conditions.merge(start: 'おい').each { |_, value| user_words.delete(value) }
 
     return keyword_by_hour(hour) if user_words.empty?
 
-    [ user_words.group_by { |item| item }.sort_by{ |_, value| -value.size }.map(&:first).first ]
+    [user_words.group_by { |item| item }.sort_by { |_, value| -value.size }.map(&:first).first]
   end
 
   def time_range
     {
-      0 => :midnight,
-      1 => :midnight,
-      2 => :midnight,
-      3 => :midnight,
-      4 => :morning,
-      5 => :morning,
-      6 => :morning,
-      7 => :morning,
-      8 => :morning,
-      9 => :morning,
-      10 => :morning,
-      11 => :noon,
-      12 => :noon,
-      13 => :noon,
-      14 => :after_noon,
-      15 => :after_noon,
-      16 => :after_noon,
-      17 => :after_noon,
-      18 => :night,
-      19 => :night,
-      20 => :night,
-      21 => :night,
-      22 => :midnight,
-      23 => :midnight,
-      24 => :midnight
+      0 => :midnight, 1 => :midnight, 2 => :midnight, 3 => :midnight,
+      4 => :morning, 5 => :morning, 6 => :morning, 7 => :morning, 8 => :morning, 9 => :morning, 10 => :morning,
+      11 => :noon, 12 => :noon, 13 => :noon,
+      14 => :after_noon, 15 => :after_noon, 16 => :after_noon, 17 => :after_noon,
+      18 => :night, 19 => :night, 20 => :night, 21 => :night,
+      22 => :midnight, 23 => :midnight, 24 => :midnight
     }
   end
 
