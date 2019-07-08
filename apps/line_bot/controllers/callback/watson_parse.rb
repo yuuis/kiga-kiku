@@ -24,6 +24,11 @@ def pull_entities(entities)
   result
 end
 
+# 一番confidenceの高いintentsを返す
+def get_top_intents(result)
+  get_intents(result).first unless get_intents(result).empty?
+end
+
 # 返信用のテキスト文を取得
 def get_reply_text(result)
   return if result['output'].empty? || result['output']['generic'].empty?
