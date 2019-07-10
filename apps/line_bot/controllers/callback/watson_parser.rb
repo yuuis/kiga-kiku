@@ -11,16 +11,14 @@ class WatsonParser
     )
   end
 
-  def initialize(session = nil)
-    @session = session.nil? ? assistant.create_session(
-      assistant_id: ENV['WATSON_ASSISTANT_ID']
-    ) : session
-  end
-
   def create_new_session
     @session = assistant.create_session(
       assistant_id: ENV['WATSON_ASSISTANT_ID']
     )
+  end
+
+  def set_previous_session(session)
+    @session = session
   end
 
   # Watsonにリクエストを投げる
