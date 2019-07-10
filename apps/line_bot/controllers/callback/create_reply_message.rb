@@ -1,4 +1,3 @@
-require_relative 'watson_parse'
 require_relative 'line_manager'
 require 'line/bot'
 
@@ -28,42 +27,42 @@ class CreateReplyMessage < LineManager
     client.reply_message(event['replyToken'], @reply_message)
   end
 
-  # Watsonからの応答をもらう
-  def register_watson_result(watson_result)
-    @watson_result = watson_result
+  # Watsonクラスのオブジェクトをコピー
+  def register_watson(watson)
+    @watson = watson
   end
 
   # Watsonのテキストリプライを設定
   def watson_text_reply
-    unless @watson_result.blank?
+    unless @watson.result.blank?
       @reply_message.push(
         type: 'text',
-        text: get_reply_text(@watson_result)
+        text: get_reply_text(@watson.result)
       )
     end
   end
 
   # レコメンド実行
   def recommend_shop
-    return if @watson_result.blank?
+    return if @watson.result.blank?
 
     transaction = get_transaction(user_id)
     conversation = RecommendConversationRepository.new.find_by_transaction(transaction) unless transaction.nil?
 
     watson_text_reply
-    watson_entities = pull_entities(get_entities(@watson_result))
+    watson_entities = @watson.pull_entities
 
     words = []
 
     # 「もっと~」
     if watson_entities.include?('精度向上キーワード') && !conversation.nil?
-      user_request = get_origin_entities(user_message, @watson_result).first
+      user_request = get_origin_entities(user_message, @watson.result).first
       pre_conditions = JSON.parse(conversation.conditions, symbolize_names: true)
       past_conditions = check_conditions(user_request, pre_conditions)
 
     # watsonのメニューに引っかかったワード
     elsif watson_entities.include?('メニュー')
-      words = get_origin_entities(@user_message, @watson_result, 'メニュー')
+      words = get_origin_entities(@user_message, @watson.result, 'メニュー')
     end
 
     location = latest_location(user_id)
@@ -102,7 +101,7 @@ class CreateReplyMessage < LineManager
       text: event.message['address']
     )
   end
-    
+
   def get_more_condition
     lists = []
     more_conditions = ConditionRepository.new.more_conditions

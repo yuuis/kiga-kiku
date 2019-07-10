@@ -3,18 +3,8 @@ module LineBot::Controllers::Callback
     require 'line/bot'
     require 'ibm_watson/assistant_v2'
 
-    require_relative 'watson_parse'
-
     include LineBot::Action
     accept :json
-
-    def assistant
-      @assistant = IBMWatson::AssistantV2.new(
-        version: '2018-09-17',
-        username: ENV['WATSON_USERNAME'],
-        password: ENV['WATSON_PASSWORD']
-      )
-    end
 
     def call(_params)
       body = request.body.read
@@ -23,6 +13,8 @@ module LineBot::Controllers::Callback
       # LINEからのヘッダー解析
       signature = request.env['HTTP_X_LINE_SIGNATURE']
       status 400, 'Bad request' unless line.signature?(signature)
+
+      watson = WatsonParser.new
 
       line.events.each do |event|
         case event
@@ -60,38 +52,18 @@ module LineBot::Controllers::Callback
           when Line::Bot::Event::MessageType::Text
             # 文章解析を行う
             # 1. セッションを生成
-            watson_session = assistant.create_session(
-              assistant_id: ENV['WATSON_ASSISTANT_ID']
-            )
+            watson.create_new_session
             # 2. セッション情報を入力してレスポンスを受け取る
-            response = assistant.message(
-              assistant_id: ENV['WATSON_ASSISTANT_ID'],
-              session_id: watson_session.result['session_id'],
-              input: { text: line.user_message }
-            )
-            watson_result = response.result
+            watson.requestAnalysis(line.user_message)
+            # 3. 解析結果を返信文章生成クラスに送る
+            line.register_watson(watson)
 
-            line.register_watson_result(watson_result)
             # Hanami.logger.debug watson_result.to_json
 
-            watson_entities = pull_entities(get_entities(watson_result))
-
-            if watson_entities.nil?
+            if watson.pull_entities.nil?
               line.watson_text_reply
             else
               line.recommend_shop
-
-              # # UIデバッグ用の、サンプルキーテキスト受信用 ========================
-              # reply_debug = false
-              # if reply_debug
-              #   message << check_lexical(event.message['text'])
-              #   if message
-              #     client.reply_message(event['replyToken'], message)
-              #     return true
-              #   end
-              # end
-              # # ============================================================
-
             end
 
             # 最後に送信
