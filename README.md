@@ -32,8 +32,6 @@ https://github.com/kenakamu/LINESimulator/releases
   * channelToken: <LINE Developerの管理画面にある`Access Token`>
   * Bot API Server Address: `http://localhost:2300/linebot/callback`
 
-
-
 ## api
   * GET `/shops`
     * query params
