@@ -21,6 +21,19 @@ prototype of *kiga-kiku flamework* ver.1
   docker-compose run kiku bundle exec rubocop -a
 ```
 
+## Test Rub with Simulator
+
+https://github.com/kenakamu/LINESimulator/releases  
+テスト用ツールを使えば、ローカル内でLINEBotのテストを行うことができる。
+
+* require 
+  * UserId: <LINE Developerの管理画面にある`Your user ID`>
+  * channelSecret: <LINE Developerの管理画面にある`Channel Secret`>
+  * channelToken: <LINE Developerの管理画面にある`Access Token`>
+  * Bot API Server Address: `http://localhost:2300/linebot/callback`
+
+
+
 ## api
   * GET `/shops`
     * query params
