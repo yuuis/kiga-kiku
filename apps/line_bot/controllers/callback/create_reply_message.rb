@@ -96,6 +96,13 @@ class CreateReplyMessage < LineManager
     send_message(@events.first)
   end
 
+  def register_location_reply(event)
+    @reply_message.push(
+      type: 'text',
+      text: event.message['address']
+    )
+  end
+    
   def get_more_condition
     lists = []
     more_conditions = ConditionRepository.new.more_conditions
