@@ -60,23 +60,16 @@ module LineBot::Controllers::Callback
           when Line::Bot::Event::MessageType::Text
             # 文章解析を行う
             # 1. セッションを生成
-            watson_session = assistant.create_session(
-              assistant_id: ENV['WATSON_ASSISTANT_ID']
-            )
+            watson = WatsonParser.new
             # 2. セッション情報を入力してレスポンスを受け取る
-            response = assistant.message(
-              assistant_id: ENV['WATSON_ASSISTANT_ID'],
-              session_id: watson_session.result['session_id'],
-              input: { text: line.user_message }
-            )
-            watson_result = response.result
+            watson.requestAnalysis(line.user_message)
 
-            line.register_watson_result(watson_result)
+            line.register_watson_result(watson.result)
             # Hanami.logger.debug watson_result.to_json
 
-            watson_entities = pull_entities(get_entities(watson_result))
+            # watson_entities = pull_entities(get_entities(watson.result))
 
-            if watson_entities.nil?
+            if watson.pull_entities.nil?
               line.watson_text_reply
             else
               line.recommend_shop
