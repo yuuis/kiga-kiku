@@ -15,7 +15,7 @@ class LineManager
   def initialize(body)
     @request = body
     @events = client.parse_events_from(body)
-    
+
     @line_id = @events.first['source']['userId']
     @profile = JSON.parse(client.get_profile(@line_id).read_body)
     @display_name = @profile['displayName']
@@ -40,7 +40,8 @@ class LineManager
   end
 
   private
+
   def check_dummy_token(body)
-    JSON.parse(body)['events'].first['replyToken'] === "dummyToken"
+    JSON.parse(body)['events'].first['replyToken'] === 'dummyToken'
   end
 end
