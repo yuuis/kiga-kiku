@@ -6,14 +6,6 @@ module LineBot::Controllers::Callback
     include LineBot::Action
     accept :json
 
-    def assistant
-      @assistant = IBMWatson::AssistantV2.new(
-        version: '2018-09-17',
-        username: ENV['WATSON_USERNAME'],
-        password: ENV['WATSON_PASSWORD']
-      )
-    end
-
     def call(_params)
       body = request.body.read
       line = CreateReplyMessage.new(body)
@@ -63,28 +55,15 @@ module LineBot::Controllers::Callback
             watson.create_new_session
             # 2. セッション情報を入力してレスポンスを受け取る
             watson.requestAnalysis(line.user_message)
-
+            # 3. 解析結果を返信文章生成クラスに送る
             line.register_watson(watson)
-            # Hanami.logger.debug watson_result.to_json
 
-            # watson_entities = pull_entities(get_entities(watson.result))
+            # Hanami.logger.debug watson_result.to_json
 
             if watson.pull_entities.nil?
               line.watson_text_reply
             else
               line.recommend_shop
-
-              # # UIデバッグ用の、サンプルキーテキスト受信用 ========================
-              # reply_debug = false
-              # if reply_debug
-              #   message << check_lexical(event.message['text'])
-              #   if message
-              #     client.reply_message(event['replyToken'], message)
-              #     return true
-              #   end
-              # end
-              # # ============================================================
-
             end
 
             # 最後に送信
