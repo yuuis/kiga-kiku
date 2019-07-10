@@ -41,7 +41,7 @@ class LineManager
 
   private
 
-  def check_dummy_token(body)
+  def dummy_token?(body)
     JSON.parse(body)['events'].first['replyToken'] === 'dummyToken'
   end
 end
