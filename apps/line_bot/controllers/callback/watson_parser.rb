@@ -27,15 +27,15 @@ class WatsonParser
   end
 
   def generic
-    @result['output']['generic'] unless @result['output'].empty? && @result['output']['generic'].empty?
+    @result['output']['generic'] if @result['output'].present? && @result['output']['generic'].present?
   end
 
   def intents
-    @result['output']['intents'] unless @result['output'].empty? && @result['output']['intents'].empty?
+    @result['output']['intents'] if @result['output'].present? && @result['output']['intents'].present?
   end
 
   def entities
-    @result['output']['entities'] unless @result['output'].empty? && @result['output']['entities'].empty?
+    @result['output']['entities'] if @result['output'].present? && @result['output']['entities'].present?
   end
 
   # entitiesに含まれているentityを配列で取得
