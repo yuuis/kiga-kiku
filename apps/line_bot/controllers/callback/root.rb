@@ -64,7 +64,7 @@ module LineBot::Controllers::Callback
             # 2. セッション情報を入力してレスポンスを受け取る
             watson.requestAnalysis(line.user_message)
 
-            line.register_watson_result(watson.result)
+            line.register_watson(watson)
             # Hanami.logger.debug watson_result.to_json
 
             # watson_entities = pull_entities(get_entities(watson.result))
