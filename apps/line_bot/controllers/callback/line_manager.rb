@@ -8,6 +8,7 @@ class LineManager
     @client ||= Line::Bot::Client.new do |config|
       config.channel_secret = ENV['LINE_CHANNEL_SECRET']
       config.channel_token = ENV['LINE_CHANNEL_TOKEN']
+      config.endpoint = 'http://host.docker.internal:8080' if check_dummy_token(@request)
     end
   end
 
@@ -36,5 +37,11 @@ class LineManager
   def user_register
     user = UserRepository.new.create(name: @display_name)
     UserLineUserRelRepository.new.create(user_id: user.id, line_user_id: @line_id)
+  end
+
+  private
+
+  def dummy_token?(body)
+    JSON.parse(body)['events'].first['replyToken'] === 'dummyToken'
   end
 end

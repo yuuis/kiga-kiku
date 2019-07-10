@@ -8,13 +8,6 @@ module LineBot::Controllers::Callback
     include LineBot::Action
     accept :json
 
-    def client
-      @client ||= Line::Bot::Client.new do |config|
-        config.channel_secret = ENV['LINE_CHANNEL_SECRET']
-        config.channel_token = ENV['LINE_CHANNEL_TOKEN']
-      end
-    end
-
     def assistant
       @assistant = IBMWatson::AssistantV2.new(
         version: '2018-09-17',
@@ -61,11 +54,8 @@ module LineBot::Controllers::Callback
               uuid: ''
             )
 
-            message = {
-              type: 'text',
-              text: event.message['address']
-            }
-            client.reply_message(event['replyToken'], message)
+            line.register_location_reply(event)
+            line.send_message(event)
 
           when Line::Bot::Event::MessageType::Text
             # 文章解析を行う
