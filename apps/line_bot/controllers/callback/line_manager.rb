@@ -8,7 +8,7 @@ class LineManager
     @client ||= Line::Bot::Client.new do |config|
       config.channel_secret = ENV['LINE_CHANNEL_SECRET']
       config.channel_token = ENV['LINE_CHANNEL_TOKEN']
-      config.endpoint = 'http://host.docker.internal:8080' if check_dummy_token(@request)
+      config.endpoint = 'http://host.docker.internal:8080' if dummy_token?(@request)
     end
   end
 
