@@ -44,7 +44,7 @@ class WatsonParser
 
   # entitiesに含まれているentityを配列で取得
   def pull_entities
-    return if entities.empty?
+    return if entities.blank?
 
     entity_list = []
     entities.each do |entity|
