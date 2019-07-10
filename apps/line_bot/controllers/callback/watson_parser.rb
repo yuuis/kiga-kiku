@@ -1,8 +1,9 @@
 require 'ibm_watson/assistant_v2'
 
 class WatsonParser
+  attr_reader :result
 
-  def initialize
+  def assistant
     @assistant = IBMWatson::AssistantV2.new(
       version: '2018-09-17',
       username: ENV['WATSON_USERNAME'],
@@ -10,17 +11,22 @@ class WatsonParser
     )
   end
 
-  def create_session
-    @session = @assistant.create_session(
+  def initialize(session = nil)
+    @session = session.nil? ? assistant.create_session(
+      assistant_id: ENV['WATSON_ASSISTANT_ID']
+    ) : session
+  end
+
+  def create_new_session
+    @session = assistant.create_session(
       assistant_id: ENV['WATSON_ASSISTANT_ID']
     )
   end
 
   # Watsonにリクエストを投げる
   def requestAnalysis(text)
-    @result = request({ text: text })
+    @result = request({ text: text }).result
   end
-
 
   def generic
     @result['output'].empty? || @result['output']['generic'].empty? ? nil : @result['output']['generic']
@@ -38,7 +44,7 @@ class WatsonParser
 
   # entitiesに含まれているentityを配列で取得
   def pull_entities
-    return if entities.blank?
+    return if entities.empty?
 
     entity_list = []
     entities.each do |entity|
@@ -63,8 +69,8 @@ class WatsonParser
     result
   end
 
-
   private
+
   def request(input)
     assistant.message(
       assistant_id: ENV['WATSON_ASSISTANT_ID'],
@@ -72,7 +78,5 @@ class WatsonParser
       input: input
     )
   end
-
-
 
 end
