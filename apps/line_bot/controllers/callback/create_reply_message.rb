@@ -101,7 +101,7 @@ class CreateReplyMessage < LineManager
       text: event.message['address']
     )
   end
-    
+
   def get_more_condition
     lists = []
     more_conditions = ConditionRepository.new.more_conditions

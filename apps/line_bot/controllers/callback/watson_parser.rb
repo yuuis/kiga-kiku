@@ -23,21 +23,19 @@ class WatsonParser
 
   # Watsonにリクエストを投げる
   def requestAnalysis(text)
-    @result = request({ text: text }).result
+    @result = request(text: text).result
   end
 
   def generic
-    @result['output'].empty? || @result['output']['generic'].empty? ? nil : @result['output']['generic']
+    @result['output']['generic'] unless @result['output'].empty? && @result['output']['generic'].empty?
   end
-  
-  # intentsを返す
+
   def intents
-    @result['output'].empty? || @result['output']['intents'].empty? ? nil : @result['output']['intents']
+    @result['output']['intents'] unless @result['output'].empty? && @result['output']['intents'].empty?
   end
-  
-  # entitiesを返す
+
   def entities
-    @result['output'].empty? || @result['output']['entities'].empty? ? nil : @result['output']['entities']
+    @result['output']['entities'] unless @result['output'].empty? && @result['output']['entities'].empty?
   end
 
   # entitiesに含まれているentityを配列で取得
@@ -76,5 +74,4 @@ class WatsonParser
       input: input
     )
   end
-
 end
