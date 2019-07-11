@@ -13,7 +13,7 @@ class RecommendShop
     user = UserRepository.new.find(user_id)
     return nil if user.nil?
 
-    words = keyword_by_hour(Time.now.hour) unless words.empty? && past_conditions.nil?
+    words = user_like_words(user, Time.now.hour) if words.empty? && past_conditions.nil?
 
     @recommend_result = recommend(user, words, latitude, longitude, past_conditions)
   end
@@ -36,7 +36,9 @@ class RecommendShop
 
     shops = get_shops(conditions)
 
-    return recommend(user, search_word, latitude, longitude, ConditionRepository.new.farther(conditions)) if shops.empty? && conditions.key?(:range) && conditions[:range] < 5
+    if shops.empty? && conditions.key?(:range) && conditions[:range] < 5
+      return recommend(user, search_word, latitude, longitude, ConditionRepository.new.farther(conditions))
+    end
 
     { shops: shops, conditions: conditions }
   end
@@ -86,14 +88,43 @@ class RecommendShop
   # 時間帯によってキーワードを返す
   # TODO: 履歴やユーザの好みによってキーワードを最適化
   def keyword_by_hour(hour)
-    case hour
-    when 22..24, 0..3 then %w[お酒 居酒屋].sample(1)
-    when 4..10 then %w[モーニング コーヒー ブレックファースト 朝食 朝ごはん].sample(1)
-    when 11..13 then %w[ラーメン ランチ カレー パスタ お昼ご飯].sample(1)
-    when 14..17 then %w[ケーキ お菓子 おやつ 和菓子 紅茶 喫茶店].sample(1)
-    when 18..21 then %w[ディナー 夜ご飯 夕食 レストラン].sample(1)
+    case time_range[hour]
+    when :midnight then %w[お酒 居酒屋].sample(1)
+    when :morning then %w[モーニング コーヒー ブレックファースト 朝食 朝ごはん].sample(1)
+    when :noon then %w[ラーメン ランチ カレー パスタ お昼ご飯].sample(1)
+    when :after_noon then %w[ケーキ お菓子 おやつ 和菓子 紅茶 喫茶店].sample(1)
+    when :night then %w[ディナー 夜ご飯 夕食 レストラン].sample(1)
     else ['焼肉'].sample(1)
     end
+  end
+
+  def user_like_words(user, hour)
+    transactions = RecommendTransactionRepository.new.find_all_by_user_id(user.id)
+
+    return keyword_by_hour(hour) if transactions.nil?
+
+    conversation_repository = RecommendConversationRepository.new
+    conversations = transactions.map { |transaction| conversation_repository.find_all_by_transaction(transaction) }.flatten
+
+    return keyword_by_hour(hour) if conversations.nil?
+
+    user_words = conversations.select { |conversation| time_range[conversation.created_at.hour + 9] == time_range[hour] }.map(&:user_word)
+    ConditionRepository.new.more_conditions.merge(start: 'おい').each { |_, value| user_words.delete(value) }
+
+    return keyword_by_hour(hour) if user_words.empty?
+
+    [user_words.group_by { |item| item }.sort_by { |_, value| -value.size }.map(&:first).first]
+  end
+
+  def time_range
+    {
+      0 => :midnight, 1 => :midnight, 2 => :midnight, 3 => :midnight,
+      4 => :morning, 5 => :morning, 6 => :morning, 7 => :morning, 8 => :morning, 9 => :morning, 10 => :morning,
+      11 => :noon, 12 => :noon, 13 => :noon,
+      14 => :after_noon, 15 => :after_noon, 16 => :after_noon, 17 => :after_noon,
+      18 => :night, 19 => :night, 20 => :night, 21 => :night,
+      22 => :midnight, 23 => :midnight, 24 => :midnight
+    }
   end
 
   def get_shops(conditions)

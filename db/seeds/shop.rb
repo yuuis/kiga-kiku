@@ -1,6 +1,7 @@
 require_relative '../../config/boot'
 
 class ShopSeed
+  # rubocop:disable Metrics/MethodLength
   def call
     ShopRepository.new.create(
       id: 'J001051208',
@@ -86,4 +87,5 @@ class ShopSeed
       station_name: '京王八王子'
     )
   end
+  # rubocop:enable Metrics/MethodLength
 end

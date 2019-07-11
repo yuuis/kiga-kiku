@@ -54,6 +54,8 @@ class GuessCondition
     end
   end
 
+  # ゴリゴリ計算やってるところだからゆるして
+  # rubocop:disable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/MethodLength, Metrics/PerceivedComplexity, Metrics/LineLength
   def calculate(shops)
     points = {
       genre: {},
@@ -125,4 +127,5 @@ class GuessCondition
 
     points
   end
+  # rubocop:enable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/MethodLength, Metrics/PerceivedComplexity, Metrics/LineLength
 end
