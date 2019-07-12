@@ -1,4 +1,3 @@
-require_relative 'watson_parse'
 require 'line/bot'
 
 class LineManager
