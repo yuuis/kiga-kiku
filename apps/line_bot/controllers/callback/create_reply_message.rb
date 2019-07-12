@@ -37,7 +37,7 @@ class CreateReplyMessage < LineManager
     unless @watson.result.blank?
       @reply_message.push(
         type: 'text',
-        text: get_reply_text(@watson.result)
+        text: @watson.reply_text
       )
     end
   end
@@ -56,13 +56,13 @@ class CreateReplyMessage < LineManager
 
     # 「もっと~」
     if watson_entities.include?('精度向上キーワード') && !conversation.nil?
-      user_request = get_origin_entities(user_message, @watson.result).first
+      user_request = @watson.get_origin_entities(user_message).first
       pre_conditions = JSON.parse(conversation.conditions, symbolize_names: true)
       past_conditions = check_conditions(user_request, pre_conditions)
 
     # watsonのメニューに引っかかったワード
     elsif watson_entities.include?('メニュー')
-      words = get_origin_entities(@user_message, @watson.result, 'メニュー')
+      words = @watson.get_origin_entities(@user_message, 'メニュー')
     end
 
     location = latest_location(user_id)
