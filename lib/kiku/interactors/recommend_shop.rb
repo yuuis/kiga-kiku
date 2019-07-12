@@ -26,8 +26,9 @@ class RecommendShop
     }
 
     if past_conditions.nil?
-      conditions = add_condition_tavern(conditions)
-      conditions = add_condition_midnight(conditions)
+      conditions = add_condition_tavern(conditions, Date.today)
+      conditions = add_condition_midnight(conditions, Time.now.hour)
+      conditions = add_condition_lunch(conditions, Time.now.hour)
       conditions = add_condition_budget(conditions, user)
       conditions = add_condition_range(conditions, latitude, longitude)
     else
@@ -44,22 +45,22 @@ class RecommendShop
   end
 
   # 金曜、土曜であれば居酒屋を条件に足す
-  def add_condition_tavern(conditions)
-    return conditions if [0, 1, 2, 3, 4].include?(Date.today.wday)
+  def add_condition_tavern(conditions, today)
+    return conditions if [0, 1, 2, 3, 4].include?(today.wday)
 
     conditions.merge(genre: 'G001')
   end
 
-  # 現在時刻が21:00以降であれば、深夜営業(食事も)していることを条件に足す
-  def add_condition_midnight(conditions)
-    return conditions if Time.now.hour.between?(2, 20)
+  # 時刻が深夜(22 ~ 27)であれば、深夜営業(食事も)していることを条件に足す
+  def add_condition_midnight(conditions, hour)
+    return conditions if time_range[hour] != :midnight
 
     conditions.merge(midnight_meal: 1)
   end
 
-  # 現在時刻が10:00 ~ 13:00であれば、ランチありを条件に足す
-  def add_condition_lunch(conditions)
-    return conditions unless Time.now.hour.between?(10, 13)
+  # 時刻がお昼(11 ~ 13)であれば、ランチありを条件に足す
+  def add_condition_lunch(conditions, hour)
+    return conditions unless time_range[hour] != :noon
 
     conditions.merge(lunch: 1)
   end
