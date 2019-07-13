@@ -18,7 +18,6 @@ class RecommendShop
     @recommend_result = recommend(user, words, latitude, longitude, past_conditions)
 
     # TODO: お店が見つからなかったら、キーワードを無くして無理やりお店を出す
-    binding.pry
     @recommend_result = recommend(user, [], latitude, longitude, past_conditions) if @recommend_result[:shops].empty? && words.empty? && past_conditions.nil?
   end
 
