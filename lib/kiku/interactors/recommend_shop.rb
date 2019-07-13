@@ -79,7 +79,7 @@ class RecommendShop
 
   # ユーザの年齢によって予算を条件に足す
   def add_condition_budget(conditions, user)
-    return conditions unless user.age.present? || user.age < 35
+    return conditions if user.age.nil? || user.age > 35
 
     case user.age
     when 0..22 then conditions.merge(budget: 'B001') # ¥1501 ~ ¥2000
