@@ -63,7 +63,7 @@ class RecommendShop
 
   # 時刻がお昼(11 ~ 13)であれば、ランチありを条件に足す
   def add_condition_lunch(conditions, hour)
-    return conditions unless time_range[hour] != :noon
+    return conditions if time_range[hour] != :noon
 
     conditions.merge(lunch: 1)
   end
