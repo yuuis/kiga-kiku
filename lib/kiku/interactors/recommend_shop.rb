@@ -16,6 +16,10 @@ class RecommendShop
     words = user_like_words(user, Time.now.hour) if words.empty? && past_conditions.nil?
 
     @recommend_result = recommend(user, words, latitude, longitude, past_conditions)
+
+    return @recommend_result if @recommend_result[:shops].present? && words.present? || !past_conditions.nil?
+
+    @recommend_result = recommend(user, [], latitude, longitude, past_conditions)
   end
 
   private
@@ -26,9 +30,10 @@ class RecommendShop
     }
 
     if past_conditions.nil?
-      conditions = add_condition_tavern(conditions, Date.today)
-      conditions = add_condition_midnight(conditions, Time.now.hour)
-      conditions = add_condition_lunch(conditions, Time.now.hour)
+      hour = Time.now.hour
+      conditions = add_condition_tavern(conditions, Date.today, hour)
+      conditions = add_condition_midnight(conditions, hour)
+      conditions = add_condition_lunch(conditions, hour)
       conditions = add_condition_budget(conditions, user)
       conditions = add_condition_range(conditions, latitude, longitude)
     else
@@ -44,30 +49,30 @@ class RecommendShop
     { shops: shops, conditions: conditions }
   end
 
-  # 金曜、土曜であれば居酒屋を条件に足す
-  def add_condition_tavern(conditions, today)
-    return conditions if [0, 1, 2, 3, 4].include?(today.wday)
+  # 金曜、土曜の夜であれば居酒屋を条件に足す
+  def add_condition_tavern(conditions, today, hour)
+    return conditions unless %w[fri sat].include?(%w[sun mon thu wed thu fri sat][today.wday]) && %i[night midnight].include?(time_range[hour])
 
     conditions.merge(genre: 'G001')
   end
 
   # 時刻が深夜(22 ~ 27)であれば、深夜営業(食事も)していることを条件に足す
   def add_condition_midnight(conditions, hour)
-    return conditions if time_range[hour] != :midnight
+    return conditions unless time_range[hour] == :midnight
 
     conditions.merge(midnight_meal: 1)
   end
 
   # 時刻がお昼(11 ~ 13)であれば、ランチありを条件に足す
   def add_condition_lunch(conditions, hour)
-    return conditions unless time_range[hour] != :noon
+    return conditions unless time_range[hour] == :noon
 
     conditions.merge(lunch: 1)
   end
 
   # ユーザのいる位置を条件に足す
   def add_condition_range(conditions, latitude, longitude)
-    return conditions if latitude.nil? || longitude.nil?
+    return conditions unless latitude.present? || longitude.present?
 
     conditions.merge(lat: latitude, lng: longitude, range: 3)
   end
@@ -136,11 +141,7 @@ class RecommendShop
     uri = URI.parse(ENV['HOTPEPPER_HOST'])
     http = Net::HTTP.new(uri.host, uri.port)
 
-    params = {
-      key: ENV['HOTPEPPER_API_KEY'],
-      format: 'json',
-      count: 3
-    }.merge(conditions)
+    params = { key: ENV['HOTPEPPER_API_KEY'], format: 'json', count: 3 }.merge(conditions)
 
     response = http.get(uri.path + '/gourmet/v1?' + URI.encode_www_form(params))
 
