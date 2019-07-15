@@ -2,7 +2,7 @@ require_relative 'line_manager'
 require 'line/bot'
 
 class CreateReplyMessage < LineManager
-  attr_reader :user_message
+  attr_accessor :user_message
 
   def initialize(body)
     super
@@ -93,13 +93,6 @@ class CreateReplyMessage < LineManager
       text: 'ユーザー情報を取得できなかったにゃ……。一度ブロックして、もう一回追加して欲しいにゃ。'
     )
     send_message(@events.first)
-  end
-
-  def register_location_reply(event)
-    @reply_message.push(
-      type: 'text',
-      text: event.message['address']
-    )
   end
 
   def get_more_condition
