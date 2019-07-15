@@ -34,22 +34,19 @@ module LineBot::Controllers::Callback
           line.user_send_message(event)
 
           case event.type
-          when Line::Bot::Event::MessageType::Location
-            # TODO: 最新位置情報を更新
+          when Line::Bot::Event::MessageType::Text, Line::Bot::Event::MessageType::Location
+            if event.type === Line::Bot::Event::MessageType::Location
+              LocationRepository.new.create(
+                  user_id: line.user_id,
+                  latitude: event.message['latitude'],
+                  longitude: event.message['longitude'],
+                  altitude: 0,
+                  activity_type: 'stop',
+                  uuid: ''
+              )
+              line.user_message = "LOCATION_TRIGGER"
+            end
 
-            LocationRepository.new.create(
-              user_id: line.user_id,
-              latitude: event.message['latitude'],
-              longitude: event.message['longitude'],
-              altitude: 0,
-              activity_type: 'stop',
-              uuid: ''
-            )
-
-            line.register_location_reply(event)
-            line.send_message(event)
-
-          when Line::Bot::Event::MessageType::Text
             # 文章解析を行う
             # 1. セッションを生成
             watson.create_new_session
