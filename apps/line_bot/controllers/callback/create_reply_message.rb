@@ -95,21 +95,6 @@ class CreateReplyMessage < LineManager
     send_message(@events.first)
   end
 
-  def register_location_reply
-    transaction = get_transaction(user_id)
-
-    location = latest_location(user_id)
-
-    recommend = RecommendShop.new.call(user_id, [], location[:latitude], location[:longitude])
-    shops = recommend.recommend_result[:shops]
-    conditions = recommend.recommend_result[:conditions]
-
-    return cannot_found_recommend_shop if shops.empty?
-
-    RecommendConversationRepository.new.create(recommend_transaction_id: transaction[:id], conditions: conditions.to_json, user_word: @user_message, bot_word: reply_message_text)
-    @reply_message.push(render_shops_template(shops).merge(get_more_condition))
-  end
-
   def get_more_condition
     lists = []
     more_conditions = ConditionRepository.new.more_conditions
