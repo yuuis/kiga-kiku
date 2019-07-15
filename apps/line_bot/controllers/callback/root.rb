@@ -37,14 +37,14 @@ module LineBot::Controllers::Callback
           when Line::Bot::Event::MessageType::Text, Line::Bot::Event::MessageType::Location
             if event.type === Line::Bot::Event::MessageType::Location
               LocationRepository.new.create(
-                  user_id: line.user_id,
-                  latitude: event.message['latitude'],
-                  longitude: event.message['longitude'],
-                  altitude: 0,
-                  activity_type: 'stop',
-                  uuid: ''
+                user_id: line.user_id,
+                latitude: event.message['latitude'],
+                longitude: event.message['longitude'],
+                altitude: 0,
+                activity_type: 'stop',
+                uuid: ''
               )
-              line.user_message = "LOCATION_TRIGGER"
+              line.user_message = 'LOCATION_TRIGGER'
             end
 
             # 文章解析を行う
