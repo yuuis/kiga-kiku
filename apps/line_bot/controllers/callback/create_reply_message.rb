@@ -63,7 +63,7 @@ class CreateReplyMessage < LineManager
 
       conversations = RecommendConversationRepository.new.find_all_by_transaction(transaction)
       conversation = conversations[conversations.size - 2]
-      shop_ids = RecommendedShopRepository.new.find_by_conversation(conversation).map { |shop| shop.shop_id }
+      shop_ids = RecommendedShopRepository.new.find_by_conversation(conversation).map(&:shop_id)
 
     # watsonのメニューに引っかかったワード
     elsif watson_entities.include?('メニュー')
