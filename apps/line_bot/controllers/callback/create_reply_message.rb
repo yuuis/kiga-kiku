@@ -73,10 +73,8 @@ class CreateReplyMessage < LineManager
     location = latest_location(user_id)
 
     recommend = RecommendShop.new.call(user_id, words, location[:latitude], location[:longitude], past_conditions)
-    shops = recommend.recommend_result[:shops].delete_if do |shop|
-      shop_ids.include?(shop['id'])
-    end
-    # shops = recommend.recommend_result[:shops]
+
+    shops = recommend.recommend_result[:shops].delete_if { |shop| shop_ids.include?(shop['id']) }
     conditions = recommend.recommend_result[:conditions]
 
     return cannot_found_recommend_shop if shops.empty?
