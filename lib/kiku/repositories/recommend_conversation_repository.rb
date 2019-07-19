@@ -10,6 +10,7 @@ class RecommendConversationRepository < Hanami::Repository
   end
 
   def find_all_by_transaction(transaction)
-    recommend_conversations.where(recommend_transaction_id: transaction.id).map_to(RecommendConversation).to_a
+    id = transaction.is_a?(Hash) ? transaction[:id] : transaction.id
+    recommend_conversations.where(recommend_transaction_id: id).map_to(RecommendConversation).to_a
   end
 end

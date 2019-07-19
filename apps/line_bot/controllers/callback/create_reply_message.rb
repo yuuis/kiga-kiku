@@ -53,12 +53,17 @@ class CreateReplyMessage < LineManager
     watson_entities = @watson.pull_entities
 
     words = []
+    shop_ids = []
 
     # 「もっと~」
     if watson_entities.include?('精度向上キーワード') && !conversation.nil?
       user_request = @watson.get_origin_entities(user_message).first
       pre_conditions = JSON.parse(conversation.conditions, symbolize_names: true)
       past_conditions = check_conditions(user_request, pre_conditions)
+
+      conversations = RecommendConversationRepository.new.find_all_by_transaction(transaction)
+      conversation = conversations[conversations.size - 2]
+      shop_ids = RecommendedShopRepository.new.find_by_conversation(conversation).map(&:shop_id)
 
     # watsonのメニューに引っかかったワード
     elsif watson_entities.include?('メニュー')
@@ -68,12 +73,18 @@ class CreateReplyMessage < LineManager
     location = latest_location(user_id)
 
     recommend = RecommendShop.new.call(user_id, words, location[:latitude], location[:longitude], past_conditions)
-    shops = recommend.recommend_result[:shops]
+
+    shops = recommend.recommend_result[:shops].delete_if { |shop| shop_ids.include?(shop['id']) }
     conditions = recommend.recommend_result[:conditions]
 
     return cannot_found_recommend_shop if shops.empty?
 
-    RecommendConversationRepository.new.create(recommend_transaction_id: transaction[:id], conditions: conditions.to_json, user_word: @user_message, bot_word: reply_message_text)
+    conversation = RecommendConversationRepository.new.create(recommend_transaction_id: transaction[:id], conditions: conditions.to_json, user_word: @user_message, bot_word: reply_message_text)
+
+    shop_repository = RecommendedShopRepository.new
+    shops.each do |shop|
+      shop_repository.create(shop_id: shop['id'], recommend_conversation_id: conversation.id)
+    end
     @reply_message.push(render_shops_template(shops).merge(get_more_condition))
   end
 
