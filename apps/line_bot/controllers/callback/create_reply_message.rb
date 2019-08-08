@@ -189,7 +189,8 @@ class CreateReplyMessage < LineManager
             {
               type: 'message',
               label: 'ここにする',
-              text: 'ここにする'
+              # TODO: GETで通信するならTokenとか必要だよね。
+              url: request.url + "?shop_id=" + shop['id'] + "&id=" + user_id
             },
             {
               type: 'uri',
