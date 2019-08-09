@@ -8,9 +8,13 @@ module Api::Controllers::UserWentShops
     expose :user_went_shop
     before :configure_response
 
+    params do
+      required(:user_id).filled
+      required(:shop_id).filled
+    end
+
     def call(params)
-      body = request.env['router.params']
-      halt 400 if body[:user_id].nil? || body[:shop_id].nil?
+      halt 400 unless params.valid?
 
       @user_went_shop = UserWentShopRepository.new.create(user_id: params.get(:user_id), shop_id: params.get(:shop_id))
     end
