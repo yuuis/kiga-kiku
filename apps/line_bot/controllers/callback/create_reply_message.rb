@@ -187,10 +187,10 @@ class CreateReplyMessage < LineManager
           text: shop['catch'],
           actions: [
             {
-              type: 'message',
+              type: 'postback',
               label: 'ここにする',
-              # TODO: GETで通信するならTokenとか必要だよね。
-              url: request.url + "?shop_id=" + shop['id'] + "&id=" + user_id
+              data: "shop_id=" + shop['id'] + "&user_id=" + user_id,
+              text:"ここにする"
             },
             {
               type: 'uri',
