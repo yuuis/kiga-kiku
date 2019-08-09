@@ -189,7 +189,7 @@ class CreateReplyMessage < LineManager
             {
               type: 'postback',
               label: 'ここにする',
-              data: "shop_id=" + shop['id'] + "&user_id=" + user_id,
+              data: "method=wentshop&shop_id=" + shop['id'] + "&user_id=" + user_id,
               text:"ここにする"
             },
             {
