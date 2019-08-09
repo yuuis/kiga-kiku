@@ -28,6 +28,23 @@ module LineBot::Controllers::Callback
             line.send_message(event)
           end
 
+        when Line::Bot::Event::Postback
+          postback = Rack::Utils.parse_nested_query(event['postback']['data'])
+          case postback['method']
+          when 'wentshop'
+            return nil if postback['user_id'].blank? || postback['shop_id'].blank?
+
+            # user_wentを登録
+            UserWentShopRepository.new.create(user_id: postback['user_id'], shop_id: postback['shop_id'])
+
+            # 返答文章をWatsonから取得
+            watson.create_new_session
+            watson.requestAnalysis(line.user_message)
+            line.register_watson(watson)
+            line.watson_text_reply
+            line.send_message(event)
+          end
+
         when Line::Bot::Event::Message
           return line.cannot_get_user_id if line.user_id.nil? # LINEID -> UserIDに変換できなかった時の例外処理
 
