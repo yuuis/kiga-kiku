@@ -4,16 +4,16 @@ prototype of *kiga-kiku flamework* ver.1
 
 ## how to build
 ```sh
-  $ docker-compose build
-  $ docker-compose run kiku bundle exec hanami db prepare
-  $ docker-compose run kiku bundle exec ruby db/seeds/seed.rb
-  $ docker-compose up -d
-  $ ssh -R kigakiku:80:localhost:2300 serveo.net
+  docker-compose build
+  docker-compose run kiku bundle exec hanami db prepare
+  docker-compose run kiku bundle exec ruby db/seeds/seed.rb
+  docker-compose up -d
+  ssh -R kigakiku:80:localhost:2300 serveo.net
 ```
 
 ## how to access mysql_data
 ```sh
-  $ docker run -v kiku_mysql_data:/srv -it ubuntu bash
+  docker run -v kiku_mysql_data:/srv -it ubuntu bash
 ```
 
 ## lint
