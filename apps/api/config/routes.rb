@@ -7,3 +7,4 @@ get '/guess_dislike/', to: 'conditions#guess_dislike'
 get '/users', to: 'users#find'
 
 post '/locations', to: 'locations#create'
+post '/user_went', to: 'user_went_shops#create'
