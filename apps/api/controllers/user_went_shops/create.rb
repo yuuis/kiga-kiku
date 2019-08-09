@@ -1,22 +1,18 @@
 # frozen_string_literal: true
 
-module Api::Controllers::UserWents
+module Api::Controllers::UserWentShops
   class Create
     include Api::Action
     accept :json
 
-    expose :user_went
+    expose :user_went_shop
     before :configure_response
 
-    params do
-      required(:user_id).filled
-      required(:shop_id).filled
-    end
-
     def call(params)
-      halt 400 unless params.valid?
+      body = request.env['router.params']
+      halt 400 if body[:user_id].nil? || body[:shop_id].nil?
 
-      @uesr_went = UserWentShopRepository.new.create(user_id: params.get(:user_id), shop_id: params.get(:shop_id))
+      @user_went_shop = UserWentShopRepository.new.create(user_id: params.get(:user_id), shop_id: params.get(:shop_id))
     end
 
     private
