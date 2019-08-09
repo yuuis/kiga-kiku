@@ -187,9 +187,10 @@ class CreateReplyMessage < LineManager
           text: shop['catch'],
           actions: [
             {
-              type: 'message',
+              type: 'postback',
               label: 'ここにする',
-              text: 'ここにする'
+              data: "method=wentshop&shop_id=#{shop['id']}&user_id=#{user_id}",
+              text:"ここにする"
             },
             {
               type: 'uri',
