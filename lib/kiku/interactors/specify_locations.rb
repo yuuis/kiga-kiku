@@ -20,6 +20,7 @@ class SpecifyLocations
   private
 
   def specify_office(locations)
+    # todo: 時間決め打ち。よくない
     office_locations = locations.select { |location| location.created_at.hour + 9 > 13 && location.created_at.hour + 9 < 18 }
 
     return nil if office_locations.empty?
@@ -31,6 +32,7 @@ class SpecifyLocations
   end
 
   def specify_home(locations)
+    # todo: 時間決め打ち。よくない
     home_locations = locations.select { |location| location.created_at.hour + 9 > 0 && location.created_at.hour + 9 < 5 }
 
     return nil if home_locations.empty?
