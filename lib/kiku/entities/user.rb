@@ -8,6 +8,10 @@ class User < Hanami::Entity
     attribute :have_children, Types::Bool
     attribute :smoker, Types::Bool
     attribute :job, Types::String
+    attribute :home_lat, Types::String
+    attribute :home_lng, Types::String
+    attribute :office_lat, Types::String
+    attribute :office_lng, Types::String
     attribute :created_at, Types::Time
     attribute :updated_at, Types::Time
   end
