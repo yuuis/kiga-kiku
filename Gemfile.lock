@@ -33,6 +33,7 @@ GEM
       rack-test (>= 0.6.3)
       regexp_parser (~> 1.2)
       xpath (~> 3.2)
+    chronic (0.10.2)
     coderay (1.1.2)
     concurrent-ruby (1.1.5)
     debug_inspector (0.0.3)
@@ -258,6 +259,8 @@ GEM
     websocket-driver (0.7.0)
       websocket-extensions (>= 0.1.0)
     websocket-extensions (0.1.3)
+    whenever (1.0.0)
+      chronic (>= 0.6.3)
     xpath (3.2.0)
       nokogiri (~> 1.8)
     yard (0.9.20)
@@ -286,6 +289,7 @@ DEPENDENCIES
   rubocop-performance
   shotgun
   tilt-jbuilder!
+  whenever
 
 BUNDLED WITH
    1.16.6

@@ -24,9 +24,6 @@ module Api::Controllers::Locations
         activity_type: body[:activity][:type],
         uuid: body[:uuid]
       )
-
-      # とりあえず。位置情報保存したら毎回その人の家とオフィスを特定する
-      SpecifyLocations.new.call(params.get(:user_id))
     end
 
     private

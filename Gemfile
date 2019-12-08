@@ -16,6 +16,8 @@ gem 'rubocop-performance'
 gem 'ibm_watson'
 gem 'line-bot-api'
 
+gem 'whenever', require: false
+
 group :development do
   # Code reloading
   # See: http://hanamirb.org/guides/projects/code-reloading
