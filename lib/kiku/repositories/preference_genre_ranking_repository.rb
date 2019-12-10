@@ -18,9 +18,4 @@ class PreferenceGenreRankingRepository < Hanami::Repository
     prev = preference_genre_rankings.where(user_id: user_id)
     prev.delete unless prev.to_a.empty?
   end
-
-  def name
-    shop = ShopGenreRepository.new.find(shop_genre_id)
-    shop.name unless shop.nil?
-  end
 end
