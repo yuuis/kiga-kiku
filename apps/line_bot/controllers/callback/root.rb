@@ -38,6 +38,9 @@ module LineBot::Controllers::Callback
             return nil if postback['shop_id'].blank?
             # user_wentを登録
             UserWentShopRepository.new.create(user_id: line.user_id, shop_id: postback['shop_id'])
+
+            # TODO: デバッグのために「ここにする」を押した瞬間にバッチを実行
+            GeneratePreferenceGenreRanking.new.call(line.user_id)
           end
 
         when Line::Bot::Event::Message

@@ -1,5 +1,4 @@
 require 'hanami/interactor'
-require 'pry'
 
 class GeneratePreferenceGenreRanking
   include Hanami::Interactor
