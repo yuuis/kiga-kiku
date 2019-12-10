@@ -15,28 +15,28 @@ class ShopRepository < Hanami::Repository
   def create_with_hash(shop_data)
     return nil if shop_data['id'].nil?
 
-    if shop_data.fetch('genre') && ShopGenreRepository.new.find(shop_data['genre']['code']).nil?
+    if !shop_data['genre'].nil? && ShopGenreRepository.new.find(shop_data['genre']['code']).nil?
       ShopGenreRepository.new.create(
         code: shop_data['genre']['code'],
         name: shop_data['genre']['name']
       )
     end
 
-    if shop_data.fetch('sub_genre') && ShopGenreRepository.new.find(shop_data['sub_genre']['code']).nil?
+    if !shop_data['sub_genre'].nil? && ShopGenreRepository.new.find(shop_data['sub_genre']['code']).nil?
       ShopGenreRepository.new.create(
         code: shop_data['sub_genre']['code'],
         name: shop_data['sub_genre']['name']
       )
     end
 
-    if shop_data.fetch('small_area') && SmallAreaRepository.new.find(shop_data['small_area']['code']).nil?
+    if !shop_data['small_area'].nil? && SmallAreaRepository.new.find(shop_data['small_area']['code']).nil?
       SmallAreaRepository.new.create(
         code: shop_data['small_area']['code'],
         name: shop_data['small_area']['name']
       )
     end
 
-    if shop_data.fetch('budget') && BudgetRepository.new.find(
+    if !shop_data['budget'].nil? && BudgetRepository.new.find(
       shop_data['budget']['code']
     ).nil?
       BudgetRepository.new.create(
