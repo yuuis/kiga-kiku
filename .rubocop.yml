@@ -1,20 +1,29 @@
 Metrics/LineLength:
-    Max: 150
+  Max: 150
 
 Metrics/BlockLength:
-    Max: 45
+  Max: 45
 
 Metrics/MethodLength:
-    Max: 35
+  Max: 35
 
 Metrics/AbcSize:
-    Max: 25
+  Max: 25
+
+Metrics/AbcSize:
+  Enabled: false
+
+Metrics/ClassLength:
+  Enabled: false
+
+Metrics/CyclomaticComplexity:
+  Enabled: false
 
 Style/ClassAndModuleChildren:
-    Enabled: false
+  Enabled: false
 
 Style/Documentation:
-    Enabled: false
+  Enabled: false
 
 Style/AsciiComments:
-    Enabled: false
+  Enabled: false
