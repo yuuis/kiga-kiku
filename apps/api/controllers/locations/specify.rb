@@ -9,7 +9,7 @@ module Api::Controllers::Locations
 
     before :configure_response
 
-    def call(params)
+    def call(_params)
       SpecifyLocationsForAllUsers.new.call
     end
 
