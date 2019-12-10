@@ -2,10 +2,13 @@ module LineBot::Controllers::Callback
   class Root
     require 'line/bot'
     require 'ibm_watson/assistant_v2'
+    require 'uri'
 
     include LineBot::Action
     accept :json
 
+    # rubocop:disable all
+    # いつかきれいにするから許してくれ……
     def call(_params)
       body = request.body.read
       line = CreateReplyMessage.new(body)
@@ -20,7 +23,6 @@ module LineBot::Controllers::Callback
         case event
 
         when Line::Bot::Event::Follow
-          line_user_id = event['source']['userId']
           unless line.registered?
             line.user_register
 
@@ -29,20 +31,13 @@ module LineBot::Controllers::Callback
           end
 
         when Line::Bot::Event::Postback
-          postback = Rack::Utils.parse_nested_query(event['postback']['data'])
+          postback = query_to_hash(event['postback']['data'])
+
           case postback['method']
           when 'wentshop'
-            return nil if postback['user_id'].blank? || postback['shop_id'].blank?
-
+            return nil if postback['shop_id'].blank?
             # user_wentを登録
-            UserWentShopRepository.new.create(user_id: postback['user_id'], shop_id: postback['shop_id'])
-
-            # 返答文章をWatsonから取得
-            watson.create_new_session
-            watson.requestAnalysis(line.user_message)
-            line.register_watson(watson)
-            line.watson_text_reply
-            line.send_message(event)
+            UserWentShopRepository.new.create(user_id: line.user_id, shop_id: postback['shop_id'])
           end
 
         when Line::Bot::Event::Message
@@ -68,17 +63,13 @@ module LineBot::Controllers::Callback
             # 1. セッションを生成
             watson.create_new_session
             # 2. セッション情報を入力してレスポンスを受け取る
-            watson.requestAnalysis(line.user_message)
+            watson.request_analysis(line.user_message)
             # 3. 解析結果を返信文章生成クラスに送る
             line.register_watson(watson)
 
             # Hanami.logger.debug watson_result.to_json
 
-            if watson.pull_entities.nil?
-              line.watson_text_reply
-            else
-              line.recommend_shop
-            end
+            line.auto_generate_message_reply
 
             # 最後に送信
             line.send_message(event)
@@ -88,6 +79,7 @@ module LineBot::Controllers::Callback
 
       status 200, 'ok'
     end
+    # rubocop:enable all
 
     private
 
@@ -95,7 +87,11 @@ module LineBot::Controllers::Callback
       case word
       when 'テキスト' then get_text_reply_test
       when 'Datepicker' then get_datepicker_test
-        end
+      end
+    end
+
+    def query_to_hash(str)
+      Hash[URI.decode_www_form(str)]
     end
   end
 end

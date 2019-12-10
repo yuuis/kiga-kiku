@@ -17,12 +17,12 @@ class WatsonParser
     )
   end
 
-  def set_previous_session(session)
+  def previous_session(session)
     @session = session
   end
 
   # Watsonにリクエストを投げる
-  def requestAnalysis(text)
+  def request_analysis(text)
     @result = request(text: text).result
   end
 

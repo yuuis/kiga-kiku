@@ -10,7 +10,7 @@ class CreateReplyMessage < LineManager
   end
 
   def user_send_message(event)
-    @user_message = event.message['text'] unless event === Line::Bot::Event::Message
+    @user_message = event.message['text'] unless event == Line::Bot::Event::Message
   end
 
   # リプライメッセージを初期化
@@ -18,8 +18,15 @@ class CreateReplyMessage < LineManager
     @reply_message = []
   end
 
+  def add_reply_message_text(text)
+    @reply_message.push(
+      type: 'text',
+      text: text
+    )
+  end
+
   def reply_message_text
-    text_reply = @reply_message.find { |item| item[:type] === 'text' }
+    text_reply = @reply_message.find { |item| item[:type] == 'text' }
     text_reply[:text] unless text_reply.nil?
   end
 
@@ -34,11 +41,24 @@ class CreateReplyMessage < LineManager
 
   # Watsonのテキストリプライを設定
   def watson_text_reply
-    unless @watson.result.blank?
-      @reply_message.push(
-        type: 'text',
-        text: @watson.reply_text
-      )
+    @reply_message.push(
+      type: 'text',
+      text: @watson.reply_text
+    )
+  end
+
+  # 持っている情報に応じて返信文を生成する
+  def auto_generate_message_reply
+    if user_message == 'ここにする'
+      shop_data = SearchShop.new.last_user_went_shop(@user)
+      reserve_shop_reply(shop_data) unless shop_data.nil?
+      return
+    end
+
+    if @watson.pull_entities.nil?
+      watson_text_reply
+    else
+      recommend_shop
     end
   end
 
@@ -47,7 +67,7 @@ class CreateReplyMessage < LineManager
     return if @watson.result.blank?
 
     transaction = get_transaction(user_id)
-    conversation = RecommendConversationRepository.new.find_by_transaction(transaction) unless transaction.nil?
+    conversation = transaction.nil? ? nil : RecommendConversationRepository.new.find_by_transaction(transaction)
 
     watson_text_reply
     watson_entities = @watson.pull_entities
@@ -85,7 +105,7 @@ class CreateReplyMessage < LineManager
     shops.each do |shop|
       shop_repository.create(shop_id: shop['id'], recommend_conversation_id: conversation.id)
     end
-    @reply_message.push(render_shops_template(shops).merge(get_more_condition))
+    @reply_message.push(render_shops_template(shops).merge(more_condition))
   end
 
   # 友達追加時に実行
@@ -106,7 +126,7 @@ class CreateReplyMessage < LineManager
     send_message(@events.first)
   end
 
-  def get_more_condition
+  def more_condition
     lists = []
     more_conditions = ConditionRepository.new.more_conditions
     lists = more_conditions.values
@@ -140,6 +160,27 @@ class CreateReplyMessage < LineManager
     @reply_message.push(
       type: 'text',
       text: '近くにお店が見当たらなかったにゃ……'
+    )
+  end
+
+  def reserve_shop_reply(shop_data)
+    if shop_data.nil?
+      @reply_message.push(
+        type: 'text',
+        text: 'お店の情報が取れなかったにゃ'
+      )
+    end
+
+    if @watson.reply_text.nil?
+      @reply_message.push(
+        type: 'text',
+        text: '猫語を日本語に翻訳できなかったにゃ'
+      )
+    end
+
+    @reply_message.push(
+      type: 'text',
+      text: "#{@watson.reply_text}\r\n#{shop_data.urls}"
     )
   end
 
@@ -189,7 +230,7 @@ class CreateReplyMessage < LineManager
             {
               type: 'postback',
               label: 'ここにする',
-              data: "method=wentshop&shop_id=#{shop['id']}&user_id=#{user_id}",
+              data: "method=wentshop&shop_id=#{shop['id']}",
               text: 'ここにする'
             },
             {
@@ -212,6 +253,7 @@ class CreateReplyMessage < LineManager
     }
   end
 
+  # rubocop:disable all
   def more_condition_items
     [
       {
@@ -250,4 +292,5 @@ class CreateReplyMessage < LineManager
       }
     ]
   end
+  # rubocop:enable all
 end

@@ -149,7 +149,10 @@ class RecommendShop
 
     response = http.get(uri.path + '/gourmet/v1?' + URI.encode_www_form(params))
 
-    return nil if response.code != '200'
+    if response.code != '200'
+      puts '200版じゃなかったよ!!!'
+      return []
+    end
 
     JSON.parse(response.body)['results']['shop']
   end
