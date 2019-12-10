@@ -1,5 +1,3 @@
-require 'pry'
-
 class SearchShop
   def last_user_went_shop(user)
     return nil if user.nil?
