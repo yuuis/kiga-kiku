@@ -18,7 +18,8 @@ class LineManager
     @line_id = @events.first['source']['userId']
     @profile = JSON.parse(client.get_profile(@line_id).read_body)
     @display_name = @profile['displayName']
-    @user = UserLineUserRelRepository.new.find_by_line_user_id(@line_id).to_user
+    user_line_rel = UserLineUserRelRepository.new.find_by_line_user_id(@line_id)
+    @user = user_line_rel.to_user unless user_line_rel.nil?
   end
 
   def signature?(signature)
