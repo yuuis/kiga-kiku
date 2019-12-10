@@ -14,7 +14,7 @@ Hanami::Model.migration do
       column :address, String, null: false
       column :lng, String, null: false
       column :lat, String, null: false
-      column :cource, String, null: false
+      column :course, String, null: false
       column :show, String, null: false
       column :non_smoking, String, null: false
       column :horigotatsu, String, null: false
