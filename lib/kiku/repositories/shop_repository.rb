@@ -13,15 +13,45 @@ class ShopRepository < Hanami::Repository
 
   # rubocop:disable Metrics/MethodLength, Metrics/PerceivedComplexity
   def create_with_hash(shop_data)
-    return nil if shop_data['id'].nil? || shop_data['genre'].nil? || shop_data['small_area'].nil?
+    return nil if shop_data['id'].nil?
+
+    if shop_data.fetch('genre') && ShopGenreRepository.new.find(shop_data['genre']['code']).nil?
+      ShopGenreRepository.new.create(
+        code: shop_data['genre']['code'],
+        name: shop_data['genre']['name']
+      )
+    end
+
+    if shop_data.fetch('sub_genre') && ShopGenreRepository.new.find(shop_data['sub_genre']['code']).nil?
+      ShopGenreRepository.new.create(
+        code: shop_data['sub_genre']['code'],
+        name: shop_data['sub_genre']['name']
+      )
+    end
+
+    if shop_data.fetch('small_area') && SmallAreaRepository.new.find(shop_data['small_area']['code']).nil?
+      SmallAreaRepository.new.create(
+        code: shop_data['small_area']['code'],
+        name: shop_data['small_area']['name']
+      )
+    end
+
+    if shop_data.fetch('budget') && BudgetRepository.new.find(
+      shop_data['budget']['code']
+    ).nil?
+      BudgetRepository.new.create(
+        code: shop_data['budget']['code'],
+        name: shop_data['budget']['name']
+      )
+    end
 
     ShopRepository.new.create(
       id: shop_data['id'],
       genre_code: shop_data['genre']['code'] || '',
       sub_genre_code: 'G002',
-      small_area_code: shop_data['small_area']['code'],
-      large_area_code: shop_data['large_area']['code'],
-      service_area_code: shop_data['service_area']['code'],
+      small_area_code: shop_data['small_area']['code'] || '',
+      large_area_code: shop_data['large_area']['code'] || '',
+      service_area_code: shop_data['service_area']['code'] || '',
       budget_code: shop_data['budget']['code'] || '',
       name: shop_data['name'] || '',
       mobile_access: shop_data['mobile_access'] || '',
@@ -57,5 +87,5 @@ class ShopRepository < Hanami::Repository
       station_name: shop_data['station_name'] || ''
     )
   end
-  # rubocop:enable Metrics/MethodLength, Metrics/PerceivedComplexity
+  # rubocop:enable
 end
