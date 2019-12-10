@@ -46,6 +46,10 @@ class RecommendShop
       return recommend(user, search_word, latitude, longitude, ConditionRepository.new.farther(conditions))
     end
 
+    shops.each do |shop|
+      ShopRepository.new.create_with_hash(shop) if ShopRepository.new.find(shop['id']).nil?
+    end
+
     { shops: shops, conditions: conditions }
   end
 
