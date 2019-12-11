@@ -5,4 +5,8 @@ class UserLineUserRel < Hanami::Entity
     attribute :created_at, Types::Time
     attribute :updated_at, Types::Time
   end
+
+  def to_user
+    UserRepository.new.find(user_id)
+  end
 end

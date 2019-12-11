@@ -18,7 +18,7 @@ class LineManager
     @line_id = @events.first['source']['userId']
     @profile = JSON.parse(client.get_profile(@line_id).read_body)
     @display_name = @profile['displayName']
-    @user = UserLineUserRelRepository.new.find_by_line_user_id(@line_id)
+    @user = UserLineUserRelRepository.new.find_by_line_user_id(@line_id).to_user
   end
 
   def signature?(signature)
@@ -26,7 +26,7 @@ class LineManager
   end
 
   def user_id
-    @user.user_id unless @user.blank?
+    @user.id unless @user.blank?
   end
 
   def registered?
@@ -41,6 +41,6 @@ class LineManager
   private
 
   def dummy_token?(body)
-    JSON.parse(body)['events'].first['replyToken'] === 'dummyToken'
+    JSON.parse(body)['events'].first['replyToken'] == 'dummyToken'
   end
 end
