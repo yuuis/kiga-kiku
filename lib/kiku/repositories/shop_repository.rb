@@ -12,79 +12,79 @@ class ShopRepository < Hanami::Repository
   end
 
   # rubocop:disable Metrics/MethodLength, Metrics/PerceivedComplexity
-  def create_with_hash(shop_data)
-    return nil if shop_data['id'].nil?
+  def create_from_hash(raw_shop)
+    return nil if raw_shop['id'].nil?
 
-    if !shop_data['genre'].nil? && ShopGenreRepository.new.find(shop_data['genre']['code']).nil?
+    if !raw_shop['genre'].nil? && ShopGenreRepository.new.find(raw_shop['genre']['code']).nil?
       ShopGenreRepository.new.create(
-        code: shop_data['genre']['code'],
-        name: shop_data['genre']['name']
+        code: raw_shop['genre']['code'],
+        name: raw_shop['genre']['name']
       )
     end
 
-    if !shop_data['sub_genre'].nil? && ShopGenreRepository.new.find(shop_data['sub_genre']['code']).nil?
+    if !raw_shop['sub_genre'].nil? && ShopGenreRepository.new.find(raw_shop['sub_genre']['code']).nil?
       ShopGenreRepository.new.create(
-        code: shop_data['sub_genre']['code'],
-        name: shop_data['sub_genre']['name']
+        code: raw_shop['sub_genre']['code'],
+        name: raw_shop['sub_genre']['name']
       )
     end
 
-    if !shop_data['small_area'].nil? && SmallAreaRepository.new.find(shop_data['small_area']['code']).nil?
+    if !raw_shop['small_area'].nil? && SmallAreaRepository.new.find(raw_shop['small_area']['code']).nil?
       SmallAreaRepository.new.create(
-        code: shop_data['small_area']['code'],
-        name: shop_data['small_area']['name']
+        code: raw_shop['small_area']['code'],
+        name: raw_shop['small_area']['name']
       )
     end
 
-    if !shop_data['budget'].nil? && BudgetRepository.new.find(
-      shop_data['budget']['code']
+    if !raw_shop['budget'].nil? && BudgetRepository.new.find(
+      raw_shop['budget']['code']
     ).nil?
       BudgetRepository.new.create(
-        code: shop_data['budget']['code'],
-        name: shop_data['budget']['name']
+        code: raw_shop['budget']['code'],
+        name: raw_shop['budget']['name']
       )
     end
 
     ShopRepository.new.create(
-      id: shop_data['id'],
-      genre_code: shop_data['genre']['code'] || '',
+      id: raw_shop['id'],
+      genre_code: raw_shop['genre']['code'] || '',
       sub_genre_code: 'G002',
-      small_area_code: shop_data['small_area']['code'] || '',
-      large_area_code: shop_data['large_area']['code'] || '',
-      service_area_code: shop_data['service_area']['code'] || '',
-      budget_code: shop_data['budget']['code'] || '',
-      name: shop_data['name'] || '',
-      mobile_access: shop_data['mobile_access'] || '',
-      address: shop_data['address'] || '',
-      lng: shop_data['lng'] || '',
-      lat: shop_data['lat'] || '',
-      course: shop_data['course'] || '',
-      show: shop_data['show'] || '',
-      non_smoking: shop_data['non_smoking'] || '',
-      horigotatsu: shop_data['horigotatsu'] || '',
-      open: shop_data['open'] || '',
-      card: shop_data['card'] || '',
-      tatami: shop_data['tatami'] || '',
-      charter: shop_data['charter'] || '',
-      wifi: shop_data['wifi'] || '',
-      shop_detail_memo: shop_data['shop_detail_memo'] || '',
-      band: shop_data['band'] || '',
-      karaoke: shop_data['karaoke'] || '',
-      midnight: shop_data['midnight'] || '',
-      urls: shop_data['urls']['pc'] || '',
-      english: shop_data['english'] || '',
-      lunch: shop_data['lunch'] || '',
-      close: shop_data['close'] || '',
-      budget_memo: shop_data['budget_memo'] || '',
-      tv: shop_data['tv'] || '',
-      private_room: shop_data['private_room'] || '',
-      barrier_free: shop_data['barrier_free'] || '',
-      child: shop_data['child'] || '',
-      capacity: shop_data['capacity'] || '',
-      pet: shop_data['pet'] || '',
-      free_food: shop_data['free_food'] || '',
-      free_drink: shop_data['free_drink'] || '',
-      station_name: shop_data['station_name'] || ''
+      small_area_code: raw_shop['small_area']['code'] || '',
+      large_area_code: raw_shop['large_area']['code'] || '',
+      service_area_code: raw_shop['service_area']['code'] || '',
+      budget_code: raw_shop['budget']['code'] || '',
+      name: raw_shop['name'] || '',
+      mobile_access: raw_shop['mobile_access'] || '',
+      address: raw_shop['address'] || '',
+      lng: raw_shop['lng'] || '',
+      lat: raw_shop['lat'] || '',
+      course: raw_shop['course'] || '',
+      show: raw_shop['show'] || '',
+      non_smoking: raw_shop['non_smoking'] || '',
+      horigotatsu: raw_shop['horigotatsu'] || '',
+      open: raw_shop['open'] || '',
+      card: raw_shop['card'] || '',
+      tatami: raw_shop['tatami'] || '',
+      charter: raw_shop['charter'] || '',
+      wifi: raw_shop['wifi'] || '',
+      shop_detail_memo: raw_shop['shop_detail_memo'] || '',
+      band: raw_shop['band'] || '',
+      karaoke: raw_shop['karaoke'] || '',
+      midnight: raw_shop['midnight'] || '',
+      urls: raw_shop['urls']['pc'] || '',
+      english: raw_shop['english'] || '',
+      lunch: raw_shop['lunch'] || '',
+      close: raw_shop['close'] || '',
+      budget_memo: raw_shop['budget_memo'] || '',
+      tv: raw_shop['tv'] || '',
+      private_room: raw_shop['private_room'] || '',
+      barrier_free: raw_shop['barrier_free'] || '',
+      child: raw_shop['child'] || '',
+      capacity: raw_shop['capacity'] || '',
+      pet: raw_shop['pet'] || '',
+      free_food: raw_shop['free_food'] || '',
+      free_drink: raw_shop['free_drink'] || '',
+      station_name: raw_shop['station_name'] || ''
     )
   end
   # rubocop:enable
