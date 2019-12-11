@@ -163,8 +163,8 @@ class CreateReplyMessage < LineManager
     )
   end
 
-  def reserve_shop_reply(shop_data)
-    if shop_data.nil?
+  def reserve_shop_reply(shop)
+    if shop.nil?
       @reply_message.push(
         type: 'text',
         text: 'お店の情報が取れなかったにゃ'
@@ -180,7 +180,7 @@ class CreateReplyMessage < LineManager
 
     @reply_message.push(
       type: 'text',
-      text: "#{@watson.reply_text}\r\n#{shop_data.urls}"
+      text: "#{@watson.reply_text}\r\n#{shop.urls}"
     )
   end
 
