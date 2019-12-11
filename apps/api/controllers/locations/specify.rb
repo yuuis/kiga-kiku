@@ -10,7 +10,11 @@ module Api::Controllers::Locations
     before :configure_response
 
     def call(_params)
-      SpecifyLocationsForAllUsers.new.call
+      users = UserRepository.new.all
+
+      users.each do |user|
+        SpecifyLocations.new.call(user.id)
+      end
     end
 
     private
