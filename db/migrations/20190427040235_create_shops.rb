@@ -3,18 +3,18 @@ Hanami::Model.migration do
     create_table :shops do
       column :id, String, null: false, primary_key: true
 
-      foreign_key :genre_code, :shop_genres, on_delete: :cascade, null: false, key: :code, type: String
-      foreign_key :sub_genre_code, :shop_genres, on_delete: :cascade, null: false, key: :code, type: String
-      foreign_key :large_area_code, :large_areas, on_delete: :cascade, null: false, key: :code, type: String
-      foreign_key :small_area_code, :small_areas, on_delete: :cascade, null: false, key: :code, type: String
-      foreign_key :budget_code, :budgets, ondelete: :cascade, null: false, key: :code, type: String
-      foreign_key :service_area_code, :service_areas, ondelete: :cascade, null: false, key: :code, type: String
+      foreign_key :genre_code, :shop_genres, on_delete: :restrict, key: :code, type: String
+      foreign_key :sub_genre_code, :shop_genres, on_delete: :restrict, key: :code, type: String
+      foreign_key :large_area_code, :large_areas, on_delete: :restrict, key: :code, type: String
+      foreign_key :small_area_code, :small_areas, on_delete: :restrict, key: :code, type: String
+      foreign_key :budget_code, :budgets, ondelete: :restrict, key: :code, type: String
+      foreign_key :service_area_code, :service_areas, ondelete: :restrict, key: :code, type: String
 
       column :mobile_access, String, null: false
       column :address, String, null: false
       column :lng, String, null: false
       column :lat, String, null: false
-      column :cource, String, null: false
+      column :course, String, null: false
       column :show, String, null: false
       column :non_smoking, String, null: false
       column :horigotatsu, String, null: false

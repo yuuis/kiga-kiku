@@ -55,7 +55,7 @@ class GuessCondition
   end
 
   # ゴリゴリ計算やってるところだからゆるして
-  # rubocop:disable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/MethodLength, Metrics/PerceivedComplexity, Metrics/LineLength
+  # rubocop:disable Metrics/MethodLength, Metrics/PerceivedComplexity, Metrics/LineLength
   def calculate(shops)
     points = {
       genre: {},
@@ -65,7 +65,7 @@ class GuessCondition
       service_area: {},
       budget: {},
       other: {
-        cource: 0,
+        course: 0,
         show: 0,
         non_smoking: 0,
         horigotatsu: 0,
@@ -103,7 +103,7 @@ class GuessCondition
       points[:service_area][shop.service_area_code] = points[:service_area][shop.service_area_code] ? points[:service_area][shop.service_area_code] + 1 : 1
       points[:budget][shop.budget_code] = points[:budget][shop.budget_code] ? points[:budget][shop.budget_code] + 1 : 1
 
-      points[:other][:cource] += 1 if shop.cource.include?('あり')
+      points[:other][:course] += 1 if shop.course.include?('あり')
       points[:other][:show] += 1 if shop.show.include?('あり')
       points[:other][:non_smoking] += 1 if shop.non_smoking.include?('あり')
       points[:other][:horigotatsu] += 1 if shop.horigotatsu.include?('あり')

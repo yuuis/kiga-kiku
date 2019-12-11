@@ -14,7 +14,7 @@ class Shop < Hanami::Entity
     attribute :address, Types::String
     attribute :lng, Types::String
     attribute :lat, Types::String
-    attribute :cource, Types::String
+    attribute :course, Types::String
     attribute :show, Types::String
     attribute :non_smoking, Types::String
     attribute :horigotatsu, Types::String

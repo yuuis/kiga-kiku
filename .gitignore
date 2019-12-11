@@ -6,3 +6,7 @@
 db/mysql_data/
 .env.*
 *.log
+
+.bundle/
+*.iml
+vendor/
