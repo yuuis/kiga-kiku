@@ -12,6 +12,12 @@ prototype of *kiga-kiku flamework* ver.1
   ssh -R kigakiku:80:localhost:2300 serveo.net
 ```
 
+## set up cron
+
+```sh
+  docker-compose exec kiku service cron start
+```
+
 ## how to access mysql_data
 
 ```sh

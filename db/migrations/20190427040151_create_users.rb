@@ -10,6 +10,10 @@ Hanami::Model.migration do
       column :have_children, TrueClass
       column :smoker, TrueClass
       column :job, String
+      column :home_lat, String
+      column :home_lng, String
+      column :office_lat, String
+      column :office_lng, String
 
       column :created_at, DateTime, null: false
       column :updated_at, DateTime, null: false
