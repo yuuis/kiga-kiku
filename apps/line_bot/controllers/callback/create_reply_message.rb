@@ -68,10 +68,10 @@ class CreateReplyMessage < LineManager
     genre_list = PreferenceGenreRankingRepository.new.find_by_user_id(@user.id)
     return nil if genre_list.empty?
 
-    genre_names = genre_list.map(&:name)
+    genre_name_list = genre_list.map(&:genre_name)
     @reply_message.push(
       type: 'text',
-      text: genre_names.to_s
+      text: genre_name_list.to_s
     )
   end
 

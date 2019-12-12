@@ -10,10 +10,6 @@ class PreferenceGenreRankingRepository < Hanami::Repository
     preference_genre_rankings.where(user_id: user_id).to_a
   end
 
-  def first(user_id)
-    preference_genre_rankings.where(user_id: user_id).to_a.first
-  end
-
   def reset_ranking_by_user_id(user_id)
     prev = preference_genre_rankings.where(user_id: user_id)
     prev.delete unless prev.to_a.empty?

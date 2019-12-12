@@ -15,8 +15,6 @@ class RecommendShop
 
     words = user_like_words(user, Time.now.hour) if words.empty? && past_conditions.nil?
 
-    binding.pry
-
     @recommend_result = recommend(user, words, latitude, longitude, past_conditions)
 
     return @recommend_result if @recommend_result[:shops].present? && words.present? || !past_conditions.nil?
@@ -102,7 +100,7 @@ class RecommendShop
   def add_condition_preference_genre(conditions, user)
     return conditions if user.nil?
 
-    pref_genre = PreferenceGenreRankingRepository.new.first(user.id)
+    pref_genre = PreferenceGenreRankingRepository.new.find_by_user_id(user.id).first
     conditions.merge(genre: pref_genre.shop_genre_id) unless pref_genre.nil?
     conditions
   end
