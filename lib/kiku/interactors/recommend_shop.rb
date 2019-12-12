@@ -19,7 +19,7 @@ class RecommendShop
 
     return @recommend_result if @recommend_result[:shops].present? && words.present? || !past_conditions.nil?
 
-    @recommend_result = recommend(user, [], latitude, longitude, past_conditions)
+    @recommend_result = recommend(user, [genre_name], latitude, longitude, past_conditions)
   end
 
   private
@@ -36,6 +36,7 @@ class RecommendShop
       conditions = add_condition_lunch(conditions, hour)
       conditions = add_condition_budget(conditions, user)
       conditions = add_condition_range(conditions, latitude, longitude)
+      conditions = add_condition_preference_genre(conditions, user)
     else
       conditions = past_conditions
     end
@@ -93,6 +94,15 @@ class RecommendShop
     else conditions.merge(budget: 'B008') # ¥4001 ~ ¥5000
     end
 
+    conditions
+  end
+
+  # ユーザーの好みのジャンルを条件に足す
+  def add_condition_preference_genre(conditions, user)
+    return conditions if user.nil?
+
+    pref_genre = PreferenceGenreRankingRepository.new.find_by_user_id(user.id).first
+    conditions.merge(genre: pref_genre.shop_genre_id) unless pref_genre.nil?
     conditions
   end
 

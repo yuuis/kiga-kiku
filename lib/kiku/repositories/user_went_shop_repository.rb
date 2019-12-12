@@ -10,7 +10,7 @@ class UserWentShopRepository < Hanami::Repository
     user_went_shops
       .select(:shop_id)
       .where(user_id: user.id)
-      .order(:created_at)
+      .order { created_at.desc }
       .limit(limit)
       .to_a
   end

@@ -53,6 +53,8 @@ class CreateReplyMessage < LineManager
       shop_data = SearchShop.new.last_user_went_shop(@user)
       reserve_shop_reply(shop_data) unless shop_data.nil?
       return
+    elsif user_message == '好きそうなジャンル'
+      return show_preference_genres
     end
 
     if @watson.pull_entities.nil?
@@ -60,6 +62,17 @@ class CreateReplyMessage < LineManager
     else
       recommend_shop
     end
+  end
+
+  def show_preference_genres
+    genre_list = PreferenceGenreRankingRepository.new.find_by_user_id(@user.id)
+    return nil if genre_list.empty?
+
+    genre_name_list = genre_list.map(&:genre_name)
+    @reply_message.push(
+      type: 'text',
+      text: genre_name_list.to_s
+    )
   end
 
   # レコメンド実行
@@ -245,7 +258,7 @@ class CreateReplyMessage < LineManager
 
     {
       type: 'template',
-      altText: 'オススメのお店',
+      altText: 'オスス���のお店',
       template: {
         type: 'carousel',
         columns: columns
