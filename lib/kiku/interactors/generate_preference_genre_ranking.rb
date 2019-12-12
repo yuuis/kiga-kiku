@@ -22,11 +22,9 @@ class GeneratePreferenceGenreRanking
     user_went_shops = UserWentShopRepository.new.findby_user_id(user_id)
     return [] if user_went_shops.empty?
 
-    genre_duplicate_list = []
-    user_went_shops.each do |shop|
-      genre_duplicate_list << ShopRepository.new.find(shop.shop_id).genre_code
+    user_went_shops.map do |shop|
+      ShopRepository.new.find(shop.shop_id).genre_code
     end
-    genre_duplicate_list
   end
 
   def sort_and_group_by_genre(genre_list)
