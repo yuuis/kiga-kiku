@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require_relative '../../../../batch/specify_locations_for_all_users'
-
 module Api::Controllers::Locations
   class Specify
     include Api::Action

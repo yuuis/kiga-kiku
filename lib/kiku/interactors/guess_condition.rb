@@ -127,5 +127,5 @@ class GuessCondition
 
     points
   end
-  # rubocop:enable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/MethodLength, Metrics/PerceivedComplexity, Metrics/LineLength
+  # rubocop:enable, Metrics/MethodLength, Metrics/PerceivedComplexity, Metrics/LineLength
 end
