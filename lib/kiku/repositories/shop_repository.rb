@@ -11,6 +11,12 @@ class ShopRepository < Hanami::Repository
     belongs_to :budget
   end
 
+  def insert_ignore(raw_shop)
+    return nil if raw_shop['id'].nil?
+
+    shops.create_from_hash(shop) unless shops.find(raw_shop['id']).nil?
+  end
+
   # rubocop:disable Metrics/MethodLength, Metrics/PerceivedComplexity
   def create_from_hash(raw_shop)
     return nil if raw_shop['id'].nil?
