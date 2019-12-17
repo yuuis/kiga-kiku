@@ -10,9 +10,6 @@ Metrics/MethodLength:
 Metrics/AbcSize:
   Max: 25
 
-Metrics/AbcSize:
-  Enabled: false
-
 Metrics/ClassLength:
   Enabled: false
 
@@ -27,3 +24,6 @@ Style/Documentation:
 
 Style/AsciiComments:
   Enabled: false
+
+AllCops:
+  TargetRubyVersion: 2.5.1
