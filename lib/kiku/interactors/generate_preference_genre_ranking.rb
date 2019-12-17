@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'hanami/interactor'
 
 class GeneratePreferenceGenreRanking
@@ -23,7 +25,7 @@ class GeneratePreferenceGenreRanking
     return [] if user_went_shops.empty?
 
     user_went_shops.map do |shop|
-      ShopRepository.new.find(shop.shop_id).genre_code
+      ShopRepository.new.find(shop.shop_id)&.genre_code
     end
   end
 

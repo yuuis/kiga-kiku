@@ -19,7 +19,7 @@ class RecommendShop
 
     return @recommend_result if @recommend_result[:shops].present? && words.present? || !past_conditions.nil?
 
-    @recommend_result = recommend(user, [genre_name], latitude, longitude, past_conditions)
+    @recommend_result = recommend(user, [], latitude, longitude, past_conditions)
   end
 
   private
