@@ -56,9 +56,9 @@ class CreateReplyMessage < LineManager
       reserve_shop_reply(shop_data) unless shop_data.nil?
       return
     elsif user_message == '好きそうなジャンル'
-      return debug_show_preference_genres
+      return show_preference_genres
     elsif user_message == '現在地'
-      return debug_show_current_location
+      return show_current_location
     end
 
     if @watson.pull_entities.nil?
@@ -222,9 +222,15 @@ class CreateReplyMessage < LineManager
     end
   end
 
-  def debug_show_preference_genres
+  def show_preference_genres
     genre_list = PreferenceGenreRankingRepository.new.find_by_user_id(@user.id)
-    return nil if genre_list.empty?
+    if genre_list.empty?
+      @reply_message.push(
+        type: 'text',
+        text: 'お前の好きなもんなんか知らんにゃ'
+      )
+      return
+    end
 
     genre_name_list = genre_list.map(&:genre_name)
     @reply_message.push(
@@ -233,9 +239,14 @@ class CreateReplyMessage < LineManager
     )
   end
 
-  def debug_show_current_location
+  def show_current_location
     location = LocationRepository.new.latest(@user.id)
-    return nil if location.nil?
+    if location.nil?
+      @reply_message.push(
+        type: 'text',
+        text: 'お前がどこにいるかわからないにゃ'
+      )
+    end
 
     @reply_message.push(
       type: 'location',
