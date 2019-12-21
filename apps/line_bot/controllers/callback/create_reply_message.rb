@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require_relative 'line_manager'
 require 'line/bot'
 
@@ -55,6 +57,8 @@ class CreateReplyMessage < LineManager
       return
     elsif user_message == '好きそうなジャンル'
       return show_preference_genres
+    elsif user_message == '現在地'
+      return show_current_location
     end
 
     if @watson.pull_entities.nil?
@@ -62,17 +66,6 @@ class CreateReplyMessage < LineManager
     else
       recommend_shop
     end
-  end
-
-  def show_preference_genres
-    genre_list = PreferenceGenreRankingRepository.new.find_by_user_id(@user.id)
-    return nil if genre_list.empty?
-
-    genre_name_list = genre_list.map(&:genre_name)
-    @reply_message.push(
-      type: 'text',
-      text: genre_name_list.to_s
-    )
   end
 
   # レコメンド実行
@@ -227,6 +220,41 @@ class CreateReplyMessage < LineManager
     when more_conditions[:closer] then condition_repository.closer(conditions)
     when more_conditions[:farther] then condition_repository.farther(conditions)
     end
+  end
+
+  def show_preference_genres
+    genre_list = PreferenceGenreRankingRepository.new.find_by_user_id(@user.id)
+    if genre_list.empty?
+      @reply_message.push(
+        type: 'text',
+        text: 'お前の好きなもんなんか知らんにゃ'
+      )
+      return
+    end
+
+    genre_name_list = genre_list.map(&:genre_name)
+    @reply_message.push(
+      type: 'text',
+      text: genre_name_list.to_s
+    )
+  end
+
+  def show_current_location
+    location = LocationRepository.new.latest(@user.id)
+    if location.nil?
+      @reply_message.push(
+        type: 'text',
+        text: 'お前がどこにいるかわからないにゃ'
+      )
+    end
+
+    @reply_message.push(
+      type: 'location',
+      title: location.activity_type,
+      address: location.altitude,
+      latitude: location.latitude,
+      longitude: location.longitude
+    )
   end
 
   def render_shops_template(shops)

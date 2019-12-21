@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module LineBot::Controllers::Callback
   class Root
     require 'line/bot'
@@ -69,8 +71,6 @@ module LineBot::Controllers::Callback
             watson.request_analysis(line.user_message)
             # 3. 解析結果を返信文章生成クラスに送る
             line.register_watson(watson)
-
-            # Hanami.logger.debug watson_result.to_json
 
             line.auto_generate_message_reply
 
