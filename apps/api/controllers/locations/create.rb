@@ -15,7 +15,7 @@ module Api::Controllers::Locations
     def call(params)
       halt 400 unless params.valid?
 
-      body = request.env['router.params']
+      body = request.env['router.params']['location']
       @location = LocationRepository.new.create(
         user_id: params.get(:user_id),
         latitude: body[:coords][:latitude],
