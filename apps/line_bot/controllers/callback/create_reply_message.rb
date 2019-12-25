@@ -286,7 +286,7 @@ class CreateReplyMessage < LineManager
 
     {
       type: 'template',
-      altText: 'オスス���のお店',
+      altText: 'オススメのお店',
       template: {
         type: 'carousel',
         columns: columns
