@@ -45,7 +45,7 @@ class CreateReplyMessage < LineManager
   def watson_text_reply
     @reply_message.push(
       type: 'text',
-      text: @watson.reply_text
+      text: 'お家にいるなら、出前ですましちゃいましょうにゃ'
     )
   end
 
@@ -111,7 +111,8 @@ class CreateReplyMessage < LineManager
     shops.each do |shop|
       shop_repository.create(shop_id: shop['id'], recommend_conversation_id: conversation.id)
     end
-    @reply_message.push(render_shops_template(shops).merge(more_condition))
+    # @reply_message.push(render_shops_template(shops).merge(more_condition))
+    @reply_message.push(delivery)
   end
 
   # 友達追加時に実行
@@ -220,6 +221,28 @@ class CreateReplyMessage < LineManager
     when more_conditions[:closer] then condition_repository.closer(conditions)
     when more_conditions[:farther] then condition_repository.farther(conditions)
     end
+  end
+
+
+  def delivery
+    {
+      type: 'template',
+      altText: 'デリバリー',
+      template: {
+        type: 'carousel',
+        columns: [{
+          thumbnailImageUrl: 'https://corporate.demae-can.com/images/business_top01.png',
+          title: '出前館',
+          text: 'ピザ・弁当などの宅配デリバリーサイト',
+          actions:
+            [{
+              type: 'uri',
+              label: '出前をとる',
+              uri: 'https://demae-can.com/'
+            }]
+        }]
+      }
+    }
   end
 
   def show_preference_genres
