@@ -193,7 +193,7 @@ GEM
     rack-test (1.1.0)
       rack (>= 1.0, < 3)
     rainbow (3.0.0)
-    rake (12.3.2)
+    rake (13.0.1)
     regexp_parser (1.4.0)
     rom (3.3.3)
       concurrent-ruby (~> 1.0)
